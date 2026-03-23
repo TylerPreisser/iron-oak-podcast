@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import { Playfair_Display, DM_Sans, JetBrains_Mono } from 'next/font/google';
 import { ThemeProvider } from '@/providers/ThemeProvider';
 import { SmoothScrollProvider } from '@/providers/SmoothScrollProvider';
+import { Header } from '@/components/layout/Header';
 import { Footer } from '@/components/layout/Footer';
 import { ForgeIntro } from '@/components/effects/ForgeIntro';
 import { IronSparks } from '@/components/effects/IronSparks';
@@ -63,6 +64,7 @@ export default function RootLayout({
           <SmoothScrollProvider>
               <ForgeIntro />
               <IronSparks />
+              <Header />
               <main className="flex-1">
                 {children}
               </main>
