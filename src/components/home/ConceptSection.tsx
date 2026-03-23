@@ -1,7 +1,6 @@
 'use client';
 
-import { useRef } from 'react';
-import { useGSAP } from '@/hooks/useGSAP';
+import { useRef, useState, useEffect } from 'react';
 
 const lines = [
   'Two men from the Kansas plains sat down to talk about God.',
@@ -12,66 +11,55 @@ const lines = [
 
 export function ConceptSection() {
   const sectionRef = useRef<HTMLElement>(null);
-  const containerRef = useRef<HTMLDivElement>(null);
+  const [activeLine, setActiveLine] = useState(-1);
 
-  useGSAP((gsap, ScrollTrigger) => {
-    if (!sectionRef.current || !containerRef.current) return;
+  useEffect(() => {
+    const section = sectionRef.current;
+    if (!section) return;
 
-    const lineElements = containerRef.current.querySelectorAll('.concept-line');
+    const handleScroll = () => {
+      const rect = section.getBoundingClientRect();
+      const sectionHeight = rect.height;
+      const viewportH = window.innerHeight;
 
-    const tl = gsap.timeline({
-      scrollTrigger: {
-        trigger: sectionRef.current,
-        start: 'top top',
-        end: '+=200%', // more scroll room so lines breathe
-        pin: true,
-        scrub: 0.8, // slightly smoother scrub
-      },
-    });
+      // How far through the section are we (0 = top just hit viewport, 1 = bottom leaving)
+      const scrolled = (viewportH - rect.top) / (sectionHeight + viewportH);
 
-    // Layout: each line gets ~20% of timeline
-    // fade in (3%) → hold (12%) → fade out (3%) → gap (2%)
-    lineElements.forEach((line, i) => {
-      const start = i * 0.20;
+      // Map scroll progress to active line
+      if (scrolled < 0.15) setActiveLine(-1);
+      else if (scrolled < 0.30) setActiveLine(0);
+      else if (scrolled < 0.45) setActiveLine(1);
+      else if (scrolled < 0.60) setActiveLine(2);
+      else if (scrolled < 0.80) setActiveLine(3);
+      else setActiveLine(4); // all done, fade out
+    };
 
-      // Smooth fade in
-      tl.fromTo(line,
-        { opacity: 0, y: 20 },
-        { opacity: 1, y: 0, duration: 0.05, ease: 'power2.out' },
-        start
-      );
-
-      // Dim out before next line (skip last)
-      if (i < lines.length - 1) {
-        tl.to(line,
-          { opacity: 0.1, y: -8, duration: 0.04, ease: 'power2.in' },
-          start + 0.16
-        );
-      }
-    });
-
-    // Last line holds, then everything fades
-    tl.to(containerRef.current,
-      { opacity: 0, duration: 0.06, ease: 'power2.in' },
-      0.90
-    );
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    handleScroll();
+    return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
   return (
     <section
       ref={sectionRef}
       id="concept"
-      className="relative min-h-screen flex items-center justify-center bg-[var(--bg-primary)]"
+      className="min-h-[200vh] relative bg-[var(--bg-primary)]"
     >
-      <div ref={containerRef} className="container-default max-w-3xl mx-auto px-6">
-        {lines.map((line, i) => (
-          <p
-            key={i}
-            className="concept-line font-[family-name:var(--font-display)] text-[var(--text-h2)] leading-relaxed text-[var(--text-primary)] mb-8 last:mb-0 will-change-[opacity,transform] opacity-0"
-          >
-            {line}
-          </p>
-        ))}
+      <div className="sticky top-0 h-screen flex items-center justify-center">
+        <div className="container-default max-w-3xl mx-auto px-6">
+          {lines.map((line, i) => (
+            <p
+              key={i}
+              className="font-[family-name:var(--font-display)] text-[var(--text-h2)] leading-relaxed text-[var(--text-primary)] mb-8 last:mb-0 transition-all duration-700 ease-out"
+              style={{
+                opacity: activeLine === i ? 1 : activeLine > i ? 0.12 : 0,
+                transform: `translateY(${activeLine >= i ? 0 : 20}px)`,
+              }}
+            >
+              {line}
+            </p>
+          ))}
+        </div>
       </div>
     </section>
   );

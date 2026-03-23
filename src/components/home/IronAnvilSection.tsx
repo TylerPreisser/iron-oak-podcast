@@ -32,13 +32,17 @@ function drawScene(
   const rand = seededRandom(Math.floor(time) + 1000);
 
   // === COORDINATES ===
-  // Bucket pokes in from right edge, partially off-screen
   const bucketX = w * 0.88;
   const bucketY = h * 0.25;
   const poolX = w * 0.58;
   const poolY = h * 0.82;
-  const pourLipX = bucketX - 120;
-  const pourLipY = bucketY + 80;
+
+  // Compute pour lip in world coords based on bucket rotation
+  const bucketAngle = -0.6 - (progress < 0.12 ? 0 : Math.min(1, (progress - 0.12) / 0.12)) * 0.4;
+  const bw = 150, lipLocalX = -bw / 2 - 4, lipLocalY = -185 / 2;
+  const bxAnim = bucketX + (1 - Math.min(1, progress / 0.2)) * 300;
+  const pourLipX = bxAnim + lipLocalX * Math.cos(bucketAngle) - lipLocalY * Math.sin(bucketAngle);
+  const pourLipY = bucketY + lipLocalX * Math.sin(bucketAngle) + lipLocalY * Math.cos(bucketAngle);
 
   // === PHASE CALCULATIONS ===
   const bucketIn = Math.min(1, progress / 0.2);
@@ -395,18 +399,20 @@ function drawScene(
     ctx.fillStyle = rimGrad;
     ctx.fill();
 
-    // Inner glow — molten metal visible inside
+    // Subtle warm glow at the rim edge only (not a full oval)
     ctx.save();
-    ctx.shadowBlur = 25;
-    ctx.shadowColor = 'rgba(255, 160, 30, 0.7)';
     ctx.beginPath();
-    ctx.ellipse(0, -bh / 2 + 4, topW / 2 - 8, 22, 0, 0, Math.PI * 2);
-    const innerGlow = ctx.createRadialGradient(0, -bh / 2 + 2, 0, 0, -bh / 2 + 2, topW / 2 - 6);
-    innerGlow.addColorStop(0, 'rgba(255, 240, 120, 0.9)');
-    innerGlow.addColorStop(0.4, 'rgba(255, 180, 40, 0.7)');
-    innerGlow.addColorStop(1, 'rgba(200, 80, 0, 0.3)');
-    ctx.fillStyle = innerGlow;
-    ctx.fill();
+    ctx.moveTo(-topW / 2, -bh / 2);
+    ctx.lineTo(topW / 2, -bh / 2);
+    ctx.lineTo(topW / 2, -bh / 2 + 8);
+    ctx.lineTo(-topW / 2, -bh / 2 + 8);
+    ctx.closePath();
+    ctx.clip();
+    const rimGlow = ctx.createLinearGradient(-topW / 2, -bh / 2, -topW / 2, -bh / 2 + 10);
+    rimGlow.addColorStop(0, 'rgba(255, 180, 40, 0.5)');
+    rimGlow.addColorStop(1, 'rgba(255, 120, 0, 0)');
+    ctx.fillStyle = rimGlow;
+    ctx.fillRect(-topW / 2, -bh / 2, topW, 10);
     ctx.restore();
 
     // Handle — bigger

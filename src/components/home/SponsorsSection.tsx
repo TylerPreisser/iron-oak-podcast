@@ -6,45 +6,26 @@ import { cn } from '@/lib/utils';
 export function SponsorsSection() {
   return (
     <section className="section-padding bg-[var(--bg-secondary)]">
-      <div className="container-default max-w-5xl mx-auto">
-        <ScrollReveal className="text-center mb-12">
+      <div className="container-default max-w-4xl mx-auto">
+        <ScrollReveal className="text-center mb-16">
           <span className="font-[family-name:var(--font-accent)] text-sm tracking-[0.2em] uppercase text-[var(--accent-iron-light)]">
-            Partners
+            Sponsored By
           </span>
-          <h2 className="font-[family-name:var(--font-display)] text-[var(--text-h2)] text-[var(--text-primary)] mt-2">
-            Partnered With Purpose
-          </h2>
         </ScrollReveal>
 
-        {/* Sponsor grid — 4 placeholder slots */}
-        <ScrollReveal delay={0.1}>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6 mb-12">
-            {[1, 2, 3, 4].map((i) => (
-              <div
-                key={i}
-                className={cn(
-                  'aspect-[3/2] rounded-[var(--radius-lg)] border border-dashed',
-                  'border-[var(--border-default)] bg-[var(--bg-tertiary)]',
-                  'flex items-center justify-center',
-                  'transition-all duration-300',
-                  'hover:border-[var(--accent-oak)]/30 hover:bg-[var(--bg-accent-surface)]'
-                )}
-              >
-                <div className="text-center px-4">
-                  {/* Subtle placeholder icon */}
-                  <svg className="w-8 h-8 mx-auto mb-2 text-[var(--text-tertiary)]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1}>
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
-                  </svg>
-                  <span className="text-xs text-[var(--text-tertiary)] font-[family-name:var(--font-accent)] tracking-wider">
-                    Partner Slot
-                  </span>
-                </div>
-              </div>
-            ))}
+        {/* Inner Tech — primary sponsor, big and prominent */}
+        <ScrollReveal delay={0.1} className="text-center mb-16">
+          <div className="inline-block px-12 py-10 rounded-[var(--radius-xl)] border border-[var(--border-default)] bg-[var(--bg-tertiary)] hover:border-[var(--accent-oak)]/30 transition-all duration-300">
+            <h3 className="font-[family-name:var(--font-display)] text-4xl md:text-5xl lg:text-6xl text-[var(--text-primary)] font-bold tracking-wide mb-2">
+              Inner Tech
+            </h3>
+            <p className="font-[family-name:var(--font-accent)] text-sm tracking-[0.15em] text-[var(--text-secondary)]">
+              Wichita, Kansas
+            </p>
           </div>
         </ScrollReveal>
 
-        {/* CTA */}
+        {/* CTA for more partners */}
         <ScrollReveal delay={0.2} className="text-center">
           <p className="text-[var(--text-secondary)] mb-4">
             Interested in partnering with Iron &amp; Oak?
