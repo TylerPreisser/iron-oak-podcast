@@ -30,22 +30,10 @@ export function HeroSection() {
       <GradientBackground className="z-0" />
 
       <div className="relative z-10 container-default px-6 w-full">
-        {/* Two-column: logo left, text right */}
-        <div className="flex flex-col lg:flex-row items-center gap-10 lg:gap-16">
-          {/* Logo — left side */}
-          <div className="hero-logo flex-shrink-0">
-            <Image
-              src="/images/iron-oak-logo.png"
-              alt="The Iron & Oak Podcast"
-              width={400}
-              height={400}
-              className="w-[220px] md:w-[300px] lg:w-[360px] h-auto"
-              priority
-            />
-          </div>
-
-          {/* Text — right side */}
-          <div className="hero-text text-center lg:text-left">
+        {/* Two-column: text left, logo right */}
+        <div className="flex flex-col-reverse lg:flex-row items-center gap-10 lg:gap-16">
+          {/* Text — left side */}
+          <div className="hero-text text-center lg:text-left flex-1">
             <h1 className="font-[family-name:var(--font-display)] text-[var(--text-hero)] leading-[1.1] text-[var(--text-primary)] mb-5">
               Where Iron Sharpens Iron and Deep Roots Hold
             </h1>
@@ -57,11 +45,8 @@ export function HeroSection() {
             <ButtonLink href="#subscribe" variant="primary" size="lg" sparkTrigger>
               Listen Now
             </ButtonLink>
-          </div>
-        </div>
-
-        {/* Email below both columns */}
-        <div className="hero-email max-w-md mx-auto lg:mx-0 mt-12">
+            {/* Email under the text, left-aligned */}
+            <div className="hero-email max-w-md mt-8 mx-auto lg:mx-0">
           <form className="flex gap-2" onSubmit={(e) => e.preventDefault()}>
             <input
               type="email"
@@ -75,6 +60,20 @@ export function HeroSection() {
               Join
             </button>
           </form>
+            </div>
+          </div>
+
+          {/* Logo — right side */}
+          <div className="hero-logo flex-shrink-0">
+            <Image
+              src="/images/iron-oak-logo.png"
+              alt="The Iron & Oak Podcast"
+              width={400}
+              height={400}
+              className="w-[220px] md:w-[300px] lg:w-[360px] h-auto"
+              priority
+            />
+          </div>
         </div>
       </div>
 
