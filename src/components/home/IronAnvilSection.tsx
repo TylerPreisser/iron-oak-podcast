@@ -67,61 +67,109 @@ function drawScene(
   }
 
   // ============================================
-  // MOLTEN POOL
+  // MOLTEN POOL — layered for realism
   // ============================================
   if (poolGrow > 0) {
-    const pw = 130 + poolGrow * 180;
-    const ph = 25 + poolGrow * 45;
+    const pw = 140 + poolGrow * 200;
+    const ph = 28 + poolGrow * 50;
 
-    // Outer dark glow ring
+    // 1. Ground reflection/heat haze (wide, subtle)
     ctx.save();
-    ctx.shadowBlur = 80 * poolGrow;
-    ctx.shadowColor = 'rgba(255, 80, 0, 0.4)';
+    ctx.shadowBlur = 100 * poolGrow;
+    ctx.shadowColor = 'rgba(200, 60, 0, 0.25)';
+    const haze = ctx.createRadialGradient(poolX, poolY + ph * 0.3, 0, poolX, poolY, pw * 1.6);
+    haze.addColorStop(0, `rgba(120, 40, 0, ${0.25 * poolGrow})`);
+    haze.addColorStop(0.5, `rgba(80, 20, 0, ${0.12 * poolGrow})`);
+    haze.addColorStop(1, 'rgba(0,0,0,0)');
     ctx.beginPath();
-    ctx.ellipse(poolX, poolY, pw * 1.1, ph * 1.3, 0, 0, Math.PI * 2);
-    const outerPool = ctx.createRadialGradient(poolX, poolY, pw * 0.3, poolX, poolY, pw * 1.1);
-    outerPool.addColorStop(0, `rgba(200, 80, 5, ${0.7 * poolGrow})`);
-    outerPool.addColorStop(0.5, `rgba(160, 50, 0, ${0.5 * poolGrow})`);
-    outerPool.addColorStop(1, `rgba(80, 20, 0, ${0.15 * poolGrow})`);
-    ctx.fillStyle = outerPool;
+    ctx.ellipse(poolX, poolY + ph * 0.3, pw * 1.6, ph * 3, 0, 0, Math.PI * 2);
+    ctx.fillStyle = haze;
     ctx.fill();
     ctx.restore();
 
-    // Main pool body
+    // 2. Dark outer crust ring
+    ctx.beginPath();
+    ctx.ellipse(poolX, poolY, pw * 1.15, ph * 1.35, 0, 0, Math.PI * 2);
+    const crustGrad = ctx.createRadialGradient(poolX, poolY, pw * 0.6, poolX, poolY, pw * 1.15);
+    crustGrad.addColorStop(0, `rgba(180, 70, 5, ${0.6 * poolGrow})`);
+    crustGrad.addColorStop(0.5, `rgba(100, 30, 0, ${0.5 * poolGrow})`);
+    crustGrad.addColorStop(0.8, `rgba(50, 15, 0, ${0.3 * poolGrow})`);
+    crustGrad.addColorStop(1, `rgba(20, 5, 0, ${0.1 * poolGrow})`);
+    ctx.fillStyle = crustGrad;
+    ctx.fill();
+
+    // 3. Main molten body
     ctx.save();
-    ctx.shadowBlur = 40 * poolGrow;
-    ctx.shadowColor = 'rgba(255, 140, 20, 0.6)';
+    ctx.shadowBlur = 50 * poolGrow;
+    ctx.shadowColor = 'rgba(255, 120, 10, 0.5)';
     ctx.beginPath();
     ctx.ellipse(poolX, poolY, pw, ph, 0, 0, Math.PI * 2);
-    const poolGrad = ctx.createRadialGradient(poolX, poolY - ph * 0.2, 0, poolX, poolY, pw);
-    poolGrad.addColorStop(0, `rgba(255, 240, 140, ${0.95 * poolGrow})`);
-    poolGrad.addColorStop(0.15, `rgba(255, 200, 60, ${0.9 * poolGrow})`);
-    poolGrad.addColorStop(0.4, `rgba(255, 140, 20, ${0.85 * poolGrow})`);
-    poolGrad.addColorStop(0.7, `rgba(220, 80, 5, ${0.7 * poolGrow})`);
-    poolGrad.addColorStop(1, `rgba(150, 40, 0, ${0.4 * poolGrow})`);
+    const poolGrad = ctx.createRadialGradient(poolX, poolY - ph * 0.15, pw * 0.1, poolX, poolY, pw);
+    poolGrad.addColorStop(0, `rgba(255, 240, 130, ${0.95 * poolGrow})`);
+    poolGrad.addColorStop(0.12, `rgba(255, 210, 60, ${0.92 * poolGrow})`);
+    poolGrad.addColorStop(0.3, `rgba(255, 160, 25, ${0.88 * poolGrow})`);
+    poolGrad.addColorStop(0.55, `rgba(230, 100, 8, ${0.8 * poolGrow})`);
+    poolGrad.addColorStop(0.8, `rgba(180, 55, 0, ${0.6 * poolGrow})`);
+    poolGrad.addColorStop(1, `rgba(120, 30, 0, ${0.35 * poolGrow})`);
     ctx.fillStyle = poolGrad;
     ctx.fill();
     ctx.restore();
 
-    // White-hot impact center
+    // 4. Surface texture — darker veins/cracks across the surface
+    const crackRand = seededRandom(200);
     ctx.save();
-    ctx.shadowBlur = 30;
-    ctx.shadowColor = 'rgba(255, 255, 200, 0.8)';
     ctx.beginPath();
-    ctx.ellipse(poolX, poolY - ph * 0.15, pw * 0.18, ph * 0.35, 0, 0, Math.PI * 2);
-    ctx.fillStyle = `rgba(255, 255, 220, ${0.8 * poolGrow})`;
+    ctx.ellipse(poolX, poolY, pw, ph, 0, 0, Math.PI * 2);
+    ctx.clip();
+    for (let c = 0; c < 8; c++) {
+      const cx1 = poolX + (crackRand() - 0.5) * pw * 1.6;
+      const cy1 = poolY + (crackRand() - 0.5) * ph * 1.6;
+      const cx2 = poolX + (crackRand() - 0.5) * pw * 1.6;
+      const cy2 = poolY + (crackRand() - 0.5) * ph * 1.6;
+      ctx.beginPath();
+      ctx.moveTo(cx1, cy1);
+      ctx.quadraticCurveTo(
+        poolX + (crackRand() - 0.5) * pw,
+        poolY + (crackRand() - 0.5) * ph,
+        cx2, cy2
+      );
+      ctx.strokeStyle = `rgba(100, 30, 0, ${0.2 * poolGrow})`;
+      ctx.lineWidth = 1.5 + crackRand() * 2;
+      ctx.stroke();
+    }
+    ctx.restore();
+
+    // 5. Animated concentric cooling rings
+    for (let i = 1; i <= 5; i++) {
+      const rippleR = pw * (0.2 + i * 0.17) + Math.sin(time * 0.03 + i * 1.5) * 4;
+      const rippleH = ph * (0.5 + i * 0.12) + Math.cos(time * 0.025 + i) * 2;
+      ctx.beginPath();
+      ctx.ellipse(poolX, poolY, rippleR, rippleH, 0, 0, Math.PI * 2);
+      ctx.strokeStyle = `rgba(255, 160, 30, ${0.08 * poolGrow * (1 - i * 0.15)})`;
+      ctx.lineWidth = 1.2;
+      ctx.stroke();
+    }
+
+    // 6. White-hot impact center (where stream hits)
+    ctx.save();
+    ctx.shadowBlur = 25;
+    ctx.shadowColor = 'rgba(255, 255, 180, 0.7)';
+    ctx.beginPath();
+    ctx.ellipse(poolX, poolY - ph * 0.1, pw * 0.12, ph * 0.3, 0, 0, Math.PI * 2);
+    const hotGrad = ctx.createRadialGradient(poolX, poolY - ph * 0.1, 0, poolX, poolY - ph * 0.1, pw * 0.12);
+    hotGrad.addColorStop(0, `rgba(255, 255, 240, ${0.9 * poolGrow})`);
+    hotGrad.addColorStop(0.5, `rgba(255, 240, 160, ${0.6 * poolGrow})`);
+    hotGrad.addColorStop(1, `rgba(255, 200, 60, ${0.2 * poolGrow})`);
+    ctx.fillStyle = hotGrad;
     ctx.fill();
     ctx.restore();
 
-    // Concentric ripple rings
-    for (let i = 1; i <= 4; i++) {
-      const rippleR = pw * (0.3 + i * 0.2) + Math.sin(time * 0.04 + i) * 5;
-      ctx.beginPath();
-      ctx.ellipse(poolX, poolY, rippleR, ph * (0.6 + i * 0.12), 0, 0, Math.PI * 2);
-      ctx.strokeStyle = `rgba(255, 180, 50, ${0.15 * poolGrow * (1 - i * 0.2)})`;
-      ctx.lineWidth = 1.5;
-      ctx.stroke();
-    }
+    // 7. Bright rim highlight on the near edge (3D depth cue)
+    ctx.beginPath();
+    ctx.ellipse(poolX, poolY, pw, ph, 0, Math.PI * 0.05, Math.PI * 0.95);
+    ctx.strokeStyle = `rgba(255, 200, 80, ${0.12 * poolGrow})`;
+    ctx.lineWidth = 2;
+    ctx.stroke();
   }
 
   // ============================================
