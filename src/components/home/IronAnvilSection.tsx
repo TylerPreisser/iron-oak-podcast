@@ -32,12 +32,13 @@ function drawScene(
   const rand = seededRandom(Math.floor(time) + 1000);
 
   // === COORDINATES ===
-  const bucketX = w * 0.62;
-  const bucketY = h * 0.12;
-  const poolX = w * 0.48;
+  // Bucket pokes in from right edge, partially off-screen
+  const bucketX = w * 0.88;
+  const bucketY = h * 0.25;
+  const poolX = w * 0.58;
   const poolY = h * 0.82;
-  const pourLipX = bucketX - 60;
-  const pourLipY = bucketY + 50;
+  const pourLipX = bucketX - 120;
+  const pourLipY = bucketY + 80;
 
   // === PHASE CALCULATIONS ===
   const bucketIn = Math.min(1, progress / 0.2);
@@ -308,12 +309,12 @@ function drawScene(
   // ============================================
   if (bucketIn > 0) {
     ctx.save();
-    const bx = bucketX + (1 - bucketIn) * 250;
+    const bx = bucketX + (1 - bucketIn) * 300; // slides in from right
     const by = bucketY;
     ctx.translate(bx, by);
-    ctx.rotate(-0.5 - tilt * 0.35); // tilt to pour
+    ctx.rotate(-0.6 - tilt * 0.4); // tilt to pour left
 
-    const bw = 90, bh = 110; // bucket dimensions
+    const bw = 150, bh = 185; // much bigger bucket
     const topW = bw, botW = bw * 0.75;
 
     // Bucket shadow
@@ -399,7 +400,7 @@ function drawScene(
     ctx.shadowBlur = 25;
     ctx.shadowColor = 'rgba(255, 160, 30, 0.7)';
     ctx.beginPath();
-    ctx.ellipse(0, -bh / 2 + 2, topW / 2 - 6, 14, 0, 0, Math.PI * 2);
+    ctx.ellipse(0, -bh / 2 + 4, topW / 2 - 8, 22, 0, 0, Math.PI * 2);
     const innerGlow = ctx.createRadialGradient(0, -bh / 2 + 2, 0, 0, -bh / 2 + 2, topW / 2 - 6);
     innerGlow.addColorStop(0, 'rgba(255, 240, 120, 0.9)');
     innerGlow.addColorStop(0.4, 'rgba(255, 180, 40, 0.7)');
@@ -408,17 +409,17 @@ function drawScene(
     ctx.fill();
     ctx.restore();
 
-    // Handle
+    // Handle — bigger
     ctx.beginPath();
-    ctx.arc(0, -bh / 2 - 22, 35, Math.PI * 0.18, Math.PI * 0.82);
+    ctx.arc(0, -bh / 2 - 30, 55, Math.PI * 0.18, Math.PI * 0.82);
     ctx.strokeStyle = '#3A3A40';
-    ctx.lineWidth = 6;
+    ctx.lineWidth = 8;
     ctx.lineCap = 'round';
     ctx.stroke();
     ctx.beginPath();
-    ctx.arc(0, -bh / 2 - 22, 35, Math.PI * 0.22, Math.PI * 0.78);
+    ctx.arc(0, -bh / 2 - 30, 55, Math.PI * 0.22, Math.PI * 0.78);
     ctx.strokeStyle = 'rgba(100,100,108,0.3)';
-    ctx.lineWidth = 2;
+    ctx.lineWidth = 3;
     ctx.stroke();
 
     ctx.restore();
