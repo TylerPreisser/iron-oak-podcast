@@ -33,10 +33,10 @@ function generateRoots(width: number, height: number): Segment[] {
     depth: number, progress: number,
     maxDepth: number
   ) {
-    if (thickness < 1.2 || depth > maxDepth || x < -20) return;
+    if (thickness < 1.5 || depth > maxDepth || x < -20) return;
 
-    const segLen = 12 + rand() * 18;
-    const curve = (rand() - 0.5) * 0.4; // random curve per segment
+    const segLen = 18 + rand() * 25; // longer segments = smoother curves
+    const curve = (rand() - 0.5) * 0.25; // gentler angle changes
     const newAngle = angle + curve;
     const x2 = x + Math.cos(newAngle) * segLen;
     const y2 = y + Math.sin(newAngle) * segLen;
@@ -68,10 +68,10 @@ function generateRoots(width: number, height: number): Segment[] {
 
   // 4 main root trunks starting from right edge at different Y positions
   const startPoints = [
-    { y: centerY - height * 0.18, angle: Math.PI + 0.15, thickness: 22 },
-    { y: centerY - height * 0.04, angle: Math.PI - 0.05, thickness: 26 },
-    { y: centerY + height * 0.10, angle: Math.PI + 0.08, thickness: 24 },
-    { y: centerY + height * 0.22, angle: Math.PI - 0.12, thickness: 20 },
+    { y: centerY - height * 0.18, angle: Math.PI + 0.15, thickness: 32 },
+    { y: centerY - height * 0.04, angle: Math.PI - 0.05, thickness: 38 },
+    { y: centerY + height * 0.10, angle: Math.PI + 0.08, thickness: 35 },
+    { y: centerY + height * 0.22, angle: Math.PI - 0.12, thickness: 30 },
   ];
 
   startPoints.forEach((sp, i) => {
@@ -105,10 +105,12 @@ function drawRoots(
     const ex = seg.x1 + (seg.x2 - seg.x1) * segAge;
     const ey = seg.y1 + (seg.y2 - seg.y1) * segAge;
 
-    // Main root stroke
+    // Main root stroke — quadratic curve for smoothness
+    const cpx = (seg.x1 + ex) / 2 + (seg.y2 - seg.y1) * 0.15;
+    const cpy = (seg.y1 + ey) / 2 + (seg.x1 - seg.x2) * 0.15;
     ctx.beginPath();
     ctx.moveTo(seg.x1, seg.y1);
-    ctx.lineTo(ex, ey);
+    ctx.quadraticCurveTo(cpx, cpy, ex, ey);
     ctx.strokeStyle = seg.color;
     ctx.lineWidth = seg.thickness;
     ctx.lineCap = 'round';
