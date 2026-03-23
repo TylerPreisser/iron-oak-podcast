@@ -2,8 +2,8 @@
 
 import { useRef } from 'react';
 import { useGSAP } from '@/hooks/useGSAP';
+import Image from 'next/image';
 import { ButtonLink } from '@/components/ui/Button';
-import { Logo } from '@/components/ui/Logo';
 import { GradientBackground } from '@/components/effects/GradientBackground';
 
 export function HeroSection() {
@@ -32,22 +32,22 @@ export function HeroSection() {
       <GradientBackground className="z-0" />
 
       <div className="relative z-10 container-default text-center max-w-4xl mx-auto px-6">
-        {/* Logo — same component as everywhere */}
+        {/* Logo */}
         <div className="hero-logo mb-8">
-          <Logo size="hero" />
+          <Image
+            src="/images/iron-oak-logo.png"
+            alt="The Iron & Oak Podcast"
+            width={300}
+            height={300}
+            className="mx-auto w-[200px] md:w-[280px] lg:w-[320px] h-auto"
+            priority
+          />
         </div>
 
-        {/* Subtle cross watermark behind headline */}
-        <div className="relative">
-          <svg width="50" height="65" viewBox="0 0 50 65" fill="none" className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 opacity-[0.06]" style={{ width: '120px', height: '156px' }}>
-            <rect x="21" y="0" width="8" height="65" rx="1.5" fill="var(--accent-oak)" />
-            <rect x="5" y="14" width="40" height="8" rx="1.5" fill="var(--accent-oak)" />
-          </svg>
-          <h1 className="hero-headline relative font-[family-name:var(--font-display)] text-[var(--text-hero)] leading-[1.1] text-[var(--text-primary)] mb-6">
-            Where Iron Sharpens Iron<br />
-            and Deep Roots Hold
-          </h1>
-        </div>
+        <h1 className="hero-headline font-[family-name:var(--font-display)] text-[var(--text-hero)] leading-[1.1] text-[var(--text-primary)] mb-6">
+          Where Iron Sharpens Iron<br />
+          and Deep Roots Hold
+        </h1>
 
         <p className="hero-subtitle text-[var(--text-body)] text-[var(--text-secondary)] max-w-2xl mx-auto mb-10 text-lg md:text-xl">
           Hard questions. Honest faith. No easy answers.

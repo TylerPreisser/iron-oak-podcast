@@ -1,8 +1,8 @@
 'use client';
 
 import Link from 'next/link';
+import Image from 'next/image';
 import { footerNavItems } from '@/data/navigation';
-import { Logo } from '@/components/ui/Logo';
 
 export function Footer() {
   return (
@@ -15,7 +15,7 @@ export function Footer() {
           {/* Brand */}
           <div className="lg:col-span-1">
             <Link href="/" className="mb-4 inline-block">
-              <Logo />
+              <Image src="/images/iron-oak-logo.png" alt="Iron & Oak" width={120} height={120} className="w-14 h-14" />
             </Link>
             <p className="text-sm text-[var(--text-secondary)] leading-relaxed">
               Where iron sharpens iron and deep roots hold.

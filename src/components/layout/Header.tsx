@@ -1,8 +1,8 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import Image from 'next/image';
 import { cn } from '@/lib/utils';
-import { Logo } from '@/components/ui/Logo';
 import { NAV_SCROLL_THRESHOLD } from '@/lib/constants';
 
 export function Header() {
@@ -27,7 +27,13 @@ export function Header() {
     >
       <div className="container-default flex items-center justify-between h-16 lg:h-20">
         <button onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}>
-          <Logo />
+          <Image
+            src="/images/iron-oak-logo.png"
+            alt="Iron & Oak"
+            width={120}
+            height={120}
+            className="w-10 h-10 lg:w-12 lg:h-12"
+          />
         </button>
 
         <button

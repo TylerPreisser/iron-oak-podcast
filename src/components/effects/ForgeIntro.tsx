@@ -1,8 +1,8 @@
 'use client';
 
 import { useRef, useEffect, useState, useCallback } from 'react';
+import Image from 'next/image';
 import { cn } from '@/lib/utils';
-import { Logo } from '@/components/ui/Logo';
 
 interface Ember {
   x: number;
@@ -212,7 +212,14 @@ export function ForgeIntro() {
           textVisible ? 'opacity-100 scale-100' : 'opacity-0 scale-95'
         )}
       >
-        <Logo size="hero" />
+        <Image
+            src="/images/iron-oak-logo.png"
+            alt="The Iron & Oak Podcast"
+            width={500}
+            height={500}
+            className="w-[250px] md:w-[350px] lg:w-[420px] h-auto"
+            priority
+          />
       </div>
 
       <p className="absolute bottom-8 left-1/2 -translate-x-1/2 text-xs text-white/30 tracking-wider">

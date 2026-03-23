@@ -115,31 +115,7 @@ function drawScene(
     ctx.fill();
     ctx.restore();
 
-    // 4. Surface texture — darker veins/cracks across the surface
-    const crackRand = seededRandom(200);
-    ctx.save();
-    ctx.beginPath();
-    ctx.ellipse(poolX, poolY, pw, ph, 0, 0, Math.PI * 2);
-    ctx.clip();
-    for (let c = 0; c < 8; c++) {
-      const cx1 = poolX + (crackRand() - 0.5) * pw * 1.6;
-      const cy1 = poolY + (crackRand() - 0.5) * ph * 1.6;
-      const cx2 = poolX + (crackRand() - 0.5) * pw * 1.6;
-      const cy2 = poolY + (crackRand() - 0.5) * ph * 1.6;
-      ctx.beginPath();
-      ctx.moveTo(cx1, cy1);
-      ctx.quadraticCurveTo(
-        poolX + (crackRand() - 0.5) * pw,
-        poolY + (crackRand() - 0.5) * ph,
-        cx2, cy2
-      );
-      ctx.strokeStyle = `rgba(100, 30, 0, ${0.2 * poolGrow})`;
-      ctx.lineWidth = 1.5 + crackRand() * 2;
-      ctx.stroke();
-    }
-    ctx.restore();
-
-    // 5. Animated concentric cooling rings
+    // 4. Animated concentric cooling rings
     for (let i = 1; i <= 5; i++) {
       const rippleR = pw * (0.2 + i * 0.17) + Math.sin(time * 0.03 + i * 1.5) * 4;
       const rippleH = ph * (0.5 + i * 0.12) + Math.cos(time * 0.025 + i) * 2;
