@@ -25,7 +25,7 @@ function Line({ text }: { text: string }) {
   }, []);
 
   return (
-    <div ref={ref} className="py-[15vh]">
+    <div ref={ref} className="py-[22vh]">
       <p
         className="font-[family-name:var(--font-display)] text-[var(--text-h2)] leading-relaxed text-[var(--text-primary)] text-center max-w-3xl mx-auto px-6"
         style={{

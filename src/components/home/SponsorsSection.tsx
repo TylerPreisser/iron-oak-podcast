@@ -5,7 +5,7 @@ import { cn } from '@/lib/utils';
 
 export function SponsorsSection() {
   return (
-    <section className="section-padding bg-[var(--bg-secondary)]">
+    <section className="section-padding bg-[var(--bg-primary)]">
       <div className="container-default max-w-4xl mx-auto">
         <ScrollReveal className="text-center mb-16">
           <span className="font-[family-name:var(--font-accent)] text-sm tracking-[0.2em] uppercase text-[var(--accent-iron-light)]">

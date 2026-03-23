@@ -41,7 +41,7 @@ export function HostsSection() {
     <section
       ref={sectionRef}
       id="hosts"
-      className="section-padding bg-[var(--bg-secondary)]"
+      className="section-padding bg-[var(--bg-primary)]"
     >
       <div className="container-default">
         {/* Section header */}
