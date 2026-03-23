@@ -3,134 +3,332 @@
 import { useRef } from 'react';
 import { useGSAP } from '@/hooks/useGSAP';
 
-// Each root is a thick filled shape — organic twisted ribbon
-// Darker shades behind (drawn first), lighter in front (drawn last)
-function TwistedRoots({ className }: { className?: string }) {
+// Root definitions: path data, strokeWidth, color, opacity, layer order
+// Layers: 0 = back (grows first), 1 = mid, 2 = front (grows last)
+interface RootDef {
+  d: string;
+  width: number;
+  color: string;
+  opacity: number;
+  layer: number;
+}
+
+const roots: RootDef[] = [
+  // === MAIN THICK ROOTS (layer 0) — the backbone ===
+  // These are gnarled, twisting with tight reversals
+
+  // Root A: dominant central root — thick, twisting with knots
+  {
+    d: `M 950 260
+        C 920 250, 890 275, 860 258
+        C 830 240, 805 270, 775 255
+        C 745 238, 720 272, 688 252
+        C 655 232, 628 268, 595 248
+        C 562 228, 538 265, 505 245
+        C 472 225, 445 262, 412 242
+        C 380 222, 352 258, 318 240
+        C 285 222, 258 255, 225 238
+        C 192 220, 162 250, 128 235
+        C 95 220, 65 245, 30 232
+        C 0 222, -30 240, -60 230`,
+    width: 28,
+    color: '#4A3322',
+    opacity: 0.9,
+    layer: 0,
+  },
+  // Root B: lower thick root — undulates below A, crosses over at points
+  {
+    d: `M 950 310
+        C 915 325, 882 298, 848 318
+        C 815 338, 785 305, 750 322
+        C 715 340, 682 308, 648 328
+        C 615 348, 585 312, 550 332
+        C 518 350, 488 315, 455 335
+        C 420 355, 390 318, 355 338
+        C 322 356, 292 322, 258 342
+        C 225 360, 195 328, 160 345
+        C 128 360, 98 332, 62 348
+        C 30 362, 0 340, -30 352`,
+    width: 24,
+    color: '#3D2B1A',
+    opacity: 0.85,
+    layer: 0,
+  },
+  // Root C: upper thick root
+  {
+    d: `M 950 205
+        C 918 192, 885 218, 852 198
+        C 818 178, 788 210, 755 192
+        C 722 175, 692 205, 658 188
+        C 625 172, 598 200, 565 185
+        C 532 170, 502 198, 468 182
+        C 435 166, 408 195, 375 178
+        C 342 162, 312 190, 278 175
+        C 245 160, 218 185, 185 172
+        C 152 158, 125 180, 92 168
+        C 60 155, 32 175, 0 162`,
+    width: 22,
+    color: '#3A2818',
+    opacity: 0.8,
+    layer: 0,
+  },
+
+  // === MEDIUM ROOTS (layer 1) — weave between the thick ones ===
+
+  // Root D: twists between A and B
+  {
+    d: `M 950 285
+        C 912 272, 878 298, 842 278
+        C 808 260, 775 292, 738 272
+        C 702 252, 672 288, 635 268
+        C 598 248, 568 282, 530 265
+        C 495 248, 465 280, 428 262
+        C 392 245, 358 278, 322 258
+        C 288 240, 255 272, 218 255
+        C 182 238, 152 268, 115 252
+        C 80 238, 48 262, 12 248`,
+    width: 16,
+    color: '#5C3D28',
+    opacity: 0.85,
+    layer: 1,
+  },
+  // Root E: crosses over root A from below
+  {
+    d: `M 950 278
+        C 922 290, 892 262, 862 280
+        C 832 298, 800 265, 770 282
+        C 738 300, 708 268, 678 285
+        C 648 302, 618 270, 588 288
+        C 558 305, 525 275, 495 290
+        C 462 308, 432 278, 400 292
+        C 368 308, 338 280, 308 295
+        C 278 310, 248 282, 218 296
+        C 188 310, 158 285, 128 298`,
+    width: 14,
+    color: '#6B4832',
+    opacity: 0.82,
+    layer: 1,
+  },
+  // Root F: wraps tightly around Root C up top
+  {
+    d: `M 950 218
+        C 925 228, 898 205, 870 220
+        C 842 235, 815 208, 788 222
+        C 760 236, 732 212, 705 225
+        C 678 238, 650 215, 622 228
+        C 595 240, 568 218, 540 230
+        C 512 242, 485 220, 458 232
+        C 430 244, 402 222, 375 234
+        C 348 245, 320 225, 292 236
+        C 265 246, 238 228, 210 238`,
+    width: 12,
+    color: '#5A3625',
+    opacity: 0.78,
+    layer: 1,
+  },
+  // Root G: thin-medium connector between B and lower area
+  {
+    d: `M 950 338
+        C 910 348, 875 328, 838 342
+        C 800 356, 768 332, 732 348
+        C 695 362, 662 338, 625 352
+        C 588 366, 555 342, 518 356
+        C 482 368, 448 345, 412 358
+        C 375 370, 342 348, 305 362
+        C 270 374, 238 352, 202 365`,
+    width: 10,
+    color: '#4E3520',
+    opacity: 0.72,
+    layer: 1,
+  },
+
+  // === THIN BRANCHING TENDRILS (layer 2) — grow out from main roots ===
+
+  // Tendril 1: branches up from Root A
+  {
+    d: `M 688 252 C 675 235, 658 218, 640 205 C 622 192, 600 182, 575 178`,
+    width: 7,
+    color: '#6B4832',
+    opacity: 0.65,
+    layer: 2,
+  },
+  // Tendril 2: branches down from Root A
+  {
+    d: `M 505 245 C 495 265, 480 282, 462 295 C 445 308, 425 315, 400 318`,
+    width: 6,
+    color: '#5C3D28',
+    opacity: 0.6,
+    layer: 2,
+  },
+  // Tendril 3: branches up from Root B
+  {
+    d: `M 550 332 C 542 315, 528 298, 512 288 C 498 278, 478 272, 458 270`,
+    width: 6,
+    color: '#6B4832',
+    opacity: 0.6,
+    layer: 2,
+  },
+  // Tendril 4: long branch off Root C going up
+  {
+    d: `M 468 182 C 455 165, 438 150, 418 142 C 398 135, 375 132, 350 135 C 328 138, 308 128, 288 122`,
+    width: 5,
+    color: '#5A3625',
+    opacity: 0.55,
+    layer: 2,
+  },
+  // Tendril 5: drooping off Root B
+  {
+    d: `M 355 338 C 348 358, 335 375, 318 388 C 302 400, 282 408, 258 410`,
+    width: 5,
+    color: '#4E3520',
+    opacity: 0.55,
+    layer: 2,
+  },
+  // Tendril 6: tight curl off Root A
+  {
+    d: `M 318 240 C 308 225, 292 215, 275 212 C 258 210, 242 215, 228 225`,
+    width: 5,
+    color: '#6B4832',
+    opacity: 0.5,
+    layer: 2,
+  },
+  // Tendril 7: up from Root E
+  {
+    d: `M 400 292 C 392 275, 378 260, 360 252 C 342 245, 320 242, 298 245`,
+    width: 5,
+    color: '#5C3D28',
+    opacity: 0.5,
+    layer: 2,
+  },
+
+  // === HAIR ROOTS (layer 2) — tiny wisps ===
+
+  {
+    d: `M 640 205 C 630 192, 615 182, 598 178`,
+    width: 3,
+    color: '#7A5438',
+    opacity: 0.45,
+    layer: 2,
+  },
+  {
+    d: `M 288 122 C 272 118, 255 120, 240 125`,
+    width: 2.5,
+    color: '#7A5438',
+    opacity: 0.4,
+    layer: 2,
+  },
+  {
+    d: `M 258 410 C 242 415, 225 412, 210 408`,
+    width: 2.5,
+    color: '#6B4832',
+    opacity: 0.4,
+    layer: 2,
+  },
+  {
+    d: `M 228 225 C 218 235, 212 248, 210 262`,
+    width: 2.5,
+    color: '#7A5438',
+    opacity: 0.4,
+    layer: 2,
+  },
+  {
+    d: `M 575 178 C 560 172, 542 170, 525 175`,
+    width: 2.5,
+    color: '#6B4832',
+    opacity: 0.38,
+    layer: 2,
+  },
+  {
+    d: `M 462 295 C 450 308, 435 318, 418 322`,
+    width: 2.5,
+    color: '#5C3D28',
+    opacity: 0.38,
+    layer: 2,
+  },
+  {
+    d: `M 298 245 C 282 248, 268 255, 255 265`,
+    width: 2,
+    color: '#7A5438',
+    opacity: 0.35,
+    layer: 2,
+  },
+  {
+    d: `M 202 365 C 185 372, 168 368, 152 362`,
+    width: 3,
+    color: '#5A3625',
+    opacity: 0.4,
+    layer: 2,
+  },
+  // Extra wispy hair roots
+  {
+    d: `M 128 298 C 108 305, 88 302, 68 296`,
+    width: 2,
+    color: '#6B4832',
+    opacity: 0.35,
+    layer: 2,
+  },
+  {
+    d: `M 400 318 C 385 325, 368 322, 352 316`,
+    width: 2,
+    color: '#5C3D28',
+    opacity: 0.3,
+    layer: 2,
+  },
+];
+
+function OakRootsSVG({ svgRef, className }: { svgRef: React.RefObject<SVGSVGElement | null>; className?: string }) {
   return (
-    <svg viewBox="0 0 900 500" className={className} fill="none" xmlns="http://www.w3.org/2000/svg">
-      {/* === BACK LAYER — darkest roots === */}
-
-      {/* Root 1: thick bottom root, dark */}
-      <path
-        d="M 920 320 C 850 330, 780 310, 720 325 C 660 340, 610 360, 540 345
-           C 470 330, 420 355, 350 340 C 280 325, 220 350, 150 335
-           C 100 325, 40 340, -20 330
-           L -20 350 C 40 360, 100 348, 150 358
-           C 220 373, 280 348, 350 363 C 420 378, 470 353, 540 368
-           C 610 383, 660 363, 720 348 C 780 333, 850 353, 920 343 Z"
-        fill="#3D2B1A"
-        opacity="0.85"
-      />
-
-      {/* Root 2: upper back root */}
-      <path
-        d="M 920 180 C 860 170, 800 190, 740 175 C 680 160, 630 185, 570 170
-           C 510 155, 460 178, 400 165 C 340 152, 290 170, 230 160
-           C 180 152, 120 165, 60 155 L 10 150
-           L 10 170 C 70 178, 130 168, 180 175
-           C 240 185, 300 167, 360 180 C 420 193, 470 170, 530 183
-           C 590 196, 640 175, 700 188 C 760 201, 820 183, 920 195 Z"
-        fill="#2E1F10"
-        opacity="0.7"
-      />
-
-      {/* === MIDDLE LAYER — medium roots === */}
-
-      {/* Root 3: main central thick root — the dominant one */}
-      <path
-        d="M 930 240 C 870 235, 810 255, 750 240 C 700 228, 650 260, 590 245
-           C 530 230, 480 258, 420 242 C 360 226, 310 255, 250 238
-           C 190 221, 140 248, 80 232 C 40 222, -10 238, -40 230
-           L -40 265 C -10 272, 40 258, 80 268
-           C 140 284, 190 257, 250 274 C 310 291, 360 262, 420 278
-           C 480 294, 530 266, 590 282 C 650 298, 700 268, 750 278
-           C 810 292, 870 272, 930 278 Z"
-        fill="#4A3322"
-        opacity="0.9"
-      />
-
-      {/* Root 4: twisting over root 3 */}
-      <path
-        d="M 920 260 C 880 248, 840 272, 790 255 C 740 238, 700 268, 650 252
-           C 600 236, 560 262, 510 248 C 460 234, 420 260, 370 245
-           C 320 230, 280 258, 230 242 C 180 226, 140 250, 90 238
-           L 50 228
-           L 50 248 C 100 258, 140 270, 190 256
-           C 240 242, 280 278, 330 265 C 380 252, 420 280, 470 268
-           C 520 256, 560 282, 610 272 C 660 262, 700 288, 750 275
-           C 800 262, 840 292, 920 282 Z"
-        fill="#5C3D28"
-        opacity="0.85"
-      />
-
-      {/* Root 5: thin twisting tendril weaving through */}
-      <path
-        d="M 920 225 C 875 218, 830 240, 780 228 C 730 216, 690 242, 640 230
-           C 590 218, 550 238, 500 226 C 450 214, 410 236, 360 224
-           C 310 212, 270 232, 220 222 C 170 212, 130 228, 80 220
-           L 80 234 C 130 242, 170 228, 220 238
-           C 270 248, 310 228, 360 240 C 410 252, 450 230, 500 242
-           C 550 254, 590 234, 640 246 C 690 258, 730 232, 780 244
-           C 830 256, 875 234, 920 241 Z"
-        fill="#6B4832"
-        opacity="0.8"
-      />
-
-      {/* === FRONT LAYER — lightest, on top === */}
-
-      {/* Root 6: prominent front root crossing over everything */}
-      <path
-        d="M 925 275 C 880 265, 835 290, 785 272 C 735 254, 695 285, 645 268
-           C 595 251, 555 278, 505 262 C 455 246, 415 275, 365 258
-           C 315 241, 280 268, 230 252 C 180 236, 145 260, 100 248
-           L 60 240
-           L 60 258 C 105 268, 145 280, 195 266
-           C 245 252, 280 288, 330 278 C 380 268, 415 295, 465 282
-           C 515 269, 555 298, 605 288 C 655 278, 695 305, 745 292
-           C 795 279, 835 310, 925 298 Z"
-        fill="#7A5438"
-        opacity="0.95"
-      />
-
-      {/* Root 7: small tendril on top, lightest */}
-      <path
-        d="M 920 295 C 870 288, 820 302, 770 292 C 720 282, 670 298, 620 290
-           C 570 282, 520 296, 470 288 C 420 280, 370 294, 320 286
-           C 270 278, 220 290, 170 284 L 120 278
-           L 120 290 C 170 296, 220 302, 270 294
-           C 320 302, 370 308, 420 298 C 470 304, 520 310, 570 300
-           C 620 306, 670 312, 720 302 C 770 308, 820 316, 920 310 Z"
-        fill="#8B6340"
-        opacity="0.75"
-      />
-
-      {/* === BARK TEXTURE LINES — thin strokes along root bodies === */}
-      <g stroke="#2A1A0D" strokeWidth="0.5" opacity="0.3">
-        {/* Along main root */}
-        <path d="M 920 252 C 810 262, 650 248, 500 255 C 350 262, 200 248, 50 255" fill="none" />
-        <path d="M 920 260 C 800 268, 640 256, 480 263 C 320 270, 160 258, -20 265" fill="none" />
-        {/* Along front root */}
-        <path d="M 920 282 C 790 276, 640 285, 480 272 C 320 266, 180 278, 60 248" fill="none" />
-        {/* Along upper root */}
-        <path d="M 920 188 C 780 180, 620 192, 460 182 C 300 172, 150 184, 10 162" fill="none" />
-      </g>
-
-      {/* === HIGHLIGHTS — very subtle light edges === */}
-      <g stroke="#9B7B58" strokeWidth="0.8" opacity="0.15" fill="none">
-        <path d="M 920 240 C 810 235, 700 250, 580 242 C 460 234, 340 248, 220 238 C 120 230, 40 240, -20 234" />
-        <path d="M 920 270 C 820 264, 720 278, 600 268 C 480 258, 360 272, 240 262" />
-      </g>
+    <svg
+      ref={svgRef}
+      viewBox="0 0 950 500"
+      className={className}
+      preserveAspectRatio="xMaxYMid meet"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      {/* Render back to front */}
+      {roots
+        .sort((a, b) => a.layer - b.layer)
+        .map((root, i) => (
+          <path
+            key={i}
+            d={root.d}
+            className="root-path"
+            data-layer={root.layer}
+            stroke={root.color}
+            strokeWidth={root.width}
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            opacity={root.opacity}
+            fill="none"
+          />
+        ))}
     </svg>
   );
 }
 
 export function OakMissionSection() {
   const sectionRef = useRef<HTMLElement>(null);
-  const rootsRef = useRef<HTMLDivElement>(null);
+  const svgRef = useRef<SVGSVGElement>(null);
   const textRef = useRef<HTMLDivElement>(null);
 
   useGSAP((gsap, ScrollTrigger) => {
-    if (!sectionRef.current || !rootsRef.current || !textRef.current) return;
+    if (!sectionRef.current || !svgRef.current || !textRef.current) return;
+
+    const allPaths = svgRef.current.querySelectorAll('.root-path');
+
+    // Set up stroke-dashoffset for grow animation
+    allPaths.forEach((path) => {
+      const el = path as SVGPathElement;
+      const length = el.getTotalLength();
+      el.style.strokeDasharray = `${length}`;
+      el.style.strokeDashoffset = `${length}`;
+    });
+
+    // Separate paths by layer for staggered growing
+    const layer0 = svgRef.current.querySelectorAll('[data-layer="0"]');
+    const layer1 = svgRef.current.querySelectorAll('[data-layer="1"]');
+    const layer2 = svgRef.current.querySelectorAll('[data-layer="2"]');
 
     const textElements = textRef.current.querySelectorAll('.mission-text-item');
 
@@ -138,37 +336,83 @@ export function OakMissionSection() {
       scrollTrigger: {
         trigger: sectionRef.current,
         start: 'top top',
-        end: '+=150%',
+        end: '+=180%',
         pin: true,
         scrub: 0.8,
       },
     });
 
-    // 0.0–0.3: Roots slide in from right
-    tl.fromTo(rootsRef.current,
-      { xPercent: 100, opacity: 0 },
-      { xPercent: 0, opacity: 1, duration: 0.25, ease: 'power3.out' },
-      0
-    );
+    // 0.0–0.20: Main thick roots GROW in (stroke-dashoffset → 0)
+    layer0.forEach((path, i) => {
+      tl.to(path, {
+        strokeDashoffset: 0,
+        duration: 0.18,
+        ease: 'power2.out',
+      }, 0.01 + i * 0.02);
+    });
 
-    // 0.1–0.45: Text fades in alongside roots finishing
+    // 0.10–0.30: Medium roots grow in (slightly delayed)
+    layer1.forEach((path, i) => {
+      tl.to(path, {
+        strokeDashoffset: 0,
+        duration: 0.15,
+        ease: 'power2.out',
+      }, 0.10 + i * 0.02);
+    });
+
+    // 0.18–0.38: Thin tendrils + hair roots sprout
+    layer2.forEach((path, i) => {
+      tl.to(path, {
+        strokeDashoffset: 0,
+        duration: 0.10,
+        ease: 'power2.out',
+      }, 0.18 + i * 0.012);
+    });
+
+    // 0.08–0.40: Text fades in as roots are growing
     textElements.forEach((el, i) => {
       tl.fromTo(el,
-        { opacity: 0, x: -30 },
-        { opacity: 1, x: 0, duration: 0.1, ease: 'power3.out' },
-        0.1 + i * 0.07
+        { opacity: 0, x: -25 },
+        { opacity: 1, x: 0, duration: 0.10, ease: 'power3.out' },
+        0.08 + i * 0.06
       );
     });
 
-    // 0.7–0.95: Everything exits — roots slide back out right, text fades
+    // 0.65–0.85: Roots SHRINK back (reverse grow — dashoffset returns)
+    // Text fades out first
     tl.to(textRef.current,
-      { opacity: 0, x: -30, duration: 0.12, ease: 'power2.in' },
-      0.72
+      { opacity: 0, x: -20, duration: 0.10, ease: 'power2.in' },
+      0.62
     );
-    tl.to(rootsRef.current,
-      { xPercent: 100, opacity: 0, duration: 0.2, ease: 'power3.in' },
-      0.75
-    );
+
+    // Tendrils retract first, then medium, then thick
+    layer2.forEach((path, i) => {
+      const el = path as SVGPathElement;
+      const length = el.getTotalLength();
+      tl.to(path, {
+        strokeDashoffset: length,
+        duration: 0.08,
+        ease: 'power2.in',
+      }, 0.66 + i * 0.005);
+    });
+    layer1.forEach((path, i) => {
+      const el = path as SVGPathElement;
+      const length = el.getTotalLength();
+      tl.to(path, {
+        strokeDashoffset: length,
+        duration: 0.10,
+        ease: 'power2.in',
+      }, 0.72 + i * 0.01);
+    });
+    layer0.forEach((path, i) => {
+      const el = path as SVGPathElement;
+      const length = el.getTotalLength();
+      tl.to(path, {
+        strokeDashoffset: length,
+        duration: 0.12,
+        ease: 'power2.in',
+      }, 0.78 + i * 0.015);
+    });
   }, []);
 
   return (
@@ -178,7 +422,7 @@ export function OakMissionSection() {
     >
       <div className="absolute inset-0 flex items-center">
         {/* Text — left side */}
-        <div ref={textRef} className="w-full lg:w-1/2 px-6 lg:pl-12 xl:pl-20 relative z-10">
+        <div ref={textRef} className="w-full lg:w-[45%] px-6 lg:pl-12 xl:pl-20 relative z-10">
           <span className="mission-text-item block font-[family-name:var(--font-accent)] text-sm tracking-[0.2em] uppercase text-[var(--accent-oak)] mb-4 opacity-0">
             Our Mission
           </span>
@@ -193,12 +437,9 @@ export function OakMissionSection() {
           </p>
         </div>
 
-        {/* Roots — right side, slides in from off-screen */}
-        <div
-          ref={rootsRef}
-          className="absolute right-0 top-1/2 -translate-y-1/2 w-[70%] lg:w-[55%] pointer-events-none opacity-0"
-        >
-          <TwistedRoots className="w-full h-auto" />
+        {/* Roots — right side, grows in via stroke animation */}
+        <div className="absolute right-[-5%] top-1/2 -translate-y-1/2 w-[75%] lg:w-[62%] pointer-events-none">
+          <OakRootsSVG svgRef={svgRef} className="w-full h-auto" />
         </div>
       </div>
     </section>
