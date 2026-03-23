@@ -36,7 +36,7 @@ function generateRoots(width: number, height: number): Segment[] {
     if (thickness < 2.5 || depth > maxDepth || x < -30) return;
 
     const segLen = 22 + rand() * 30;
-    const curve = (rand() - 0.5) * 0.25;
+    const curve = (rand() - 0.5) * 0.18; // gentler curves
     const newAngle = angle + curve;
     const x2 = x + Math.cos(newAngle) * segLen;
     const y2 = y + Math.sin(newAngle) * segLen;
@@ -131,9 +131,9 @@ function drawRoots(
         ctx.beginPath();
         ctx.moveTo(seg.x1 + nx * offset, seg.y1 + ny * offset);
         ctx.lineTo(ex + nx * offset, ey + ny * offset);
-        ctx.strokeStyle = '#8B6340';
+        ctx.strokeStyle = '#000000';
         ctx.lineWidth = 0.8;
-        ctx.globalAlpha = grainAlpha;
+        ctx.globalAlpha = grainAlpha * 0.5;
         ctx.stroke();
       }
 
@@ -142,9 +142,9 @@ function drawRoots(
         ctx.beginPath();
         ctx.moveTo(seg.x1, seg.y1);
         ctx.lineTo(ex, ey);
-        ctx.strokeStyle = '#2A1A0D';
-        ctx.lineWidth = 1;
-        ctx.globalAlpha = grainAlpha * 0.6;
+        ctx.strokeStyle = '#000000';
+        ctx.lineWidth = 1.2;
+        ctx.globalAlpha = grainAlpha * 0.4;
         ctx.stroke();
       }
     }
@@ -267,8 +267,8 @@ export function OakMissionSection() {
           </p>
         </div>
 
-        {/* Roots — Canvas, right side */}
-        <div className="absolute right-0 top-0 bottom-0 w-[65%] lg:w-[58%] pointer-events-none">
+        {/* Roots — Canvas, right side, extends past viewport to avoid hard clip */}
+        <div className="absolute -right-[15%] top-0 bottom-0 w-[80%] lg:w-[73%] pointer-events-none">
           <canvas ref={canvasRef} className="w-full h-full" />
         </div>
       </div>
