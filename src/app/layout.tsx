@@ -5,6 +5,9 @@ import { SmoothScrollProvider } from '@/providers/SmoothScrollProvider';
 import { CursorProvider } from '@/providers/CursorProvider';
 import { Navigation } from '@/components/layout/Navigation';
 import { Footer } from '@/components/layout/Footer';
+import { ForgeIntro } from '@/components/effects/ForgeIntro';
+import { CustomCursor } from '@/components/ui/CustomCursor';
+import { IronSparks } from '@/components/effects/IronSparks';
 import './globals.css';
 
 const playfair = Playfair_Display({
@@ -62,6 +65,9 @@ export default function RootLayout({
         <ThemeProvider>
           <SmoothScrollProvider>
             <CursorProvider>
+              <ForgeIntro />
+              <CustomCursor />
+              <IronSparks />
               <Navigation />
               <main className="flex-1">
                 {children}

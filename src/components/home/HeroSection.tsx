@@ -3,6 +3,7 @@
 import { useRef } from 'react';
 import { useGSAP } from '@/hooks/useGSAP';
 import { ButtonLink } from '@/components/ui/Button';
+import { GradientBackground } from '@/components/effects/GradientBackground';
 
 export function HeroSection() {
   const sectionRef = useRef<HTMLElement>(null);
@@ -28,6 +29,9 @@ export function HeroSection() {
       id="hero"
       className="relative min-h-screen flex items-center justify-center overflow-hidden"
     >
+      {/* Animated gradient background */}
+      <GradientBackground className="z-0" />
+
       {/* Content — centered */}
       <div className="relative z-10 container-default text-center max-w-4xl mx-auto px-6">
         {/* Label */}
