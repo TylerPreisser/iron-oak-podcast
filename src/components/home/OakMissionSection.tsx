@@ -35,8 +35,8 @@ function generateRoots(width: number, height: number): Segment[] {
   ) {
     if (thickness < 2.5 || depth > maxDepth) return;
 
-    const segLen = 22 + rand() * 30;
-    const curve = (rand() - 0.5) * 0.18;
+    const segLen = 35 + rand() * 40; // longer segments = smoother, bigger sweeps
+    const curve = (rand() - 0.5) * 0.22; // broader turns, not tight jagged ones
     const newAngle = angle + curve;
     const x2 = x + Math.cos(newAngle) * segLen;
     const y2 = y + Math.sin(newAngle) * segLen;
@@ -59,24 +59,27 @@ function generateRoots(width: number, height: number): Segment[] {
 
     growBranch(x2, y2, newAngle, newThickness, depth, newProgress, maxDepth);
 
-    const branchChance = depth === 0 ? 0.10 : depth === 1 ? 0.08 : 0.06;
-    if (rand() < branchChance && thickness > 4) {
-      const branchAngle = newAngle + (rand() > 0.5 ? 1 : -1) * (0.5 + rand() * 0.7);
-      const branchThickness = thickness * (0.4 + rand() * 0.25);
+    const branchChance = depth === 0 ? 0.14 : depth === 1 ? 0.11 : 0.08;
+    if (rand() < branchChance && thickness > 3) {
+      const branchAngle = newAngle + (rand() > 0.5 ? 1 : -1) * (0.4 + rand() * 0.8);
+      const branchThickness = thickness * (0.35 + rand() * 0.3);
       growBranch(x2, y2, branchAngle, branchThickness, depth + 1, newProgress + 0.02, maxDepth);
     }
   }
 
-  // 4 main root trunks — slightly thicker than the version you liked
+  // 7 main root trunks — thick, random angles, spread vertically
   const startPoints = [
-    { y: centerY - height * 0.15, angle: Math.PI + 0.12, thickness: 38 },
-    { y: centerY - height * 0.05, angle: Math.PI - 0.06, thickness: 44 },
-    { y: centerY + height * 0.05, angle: Math.PI + 0.08, thickness: 40 },
-    { y: centerY + height * 0.15, angle: Math.PI - 0.10, thickness: 36 },
+    { y: centerY - height * 0.28, angle: Math.PI + 0.20, thickness: 42 },
+    { y: centerY - height * 0.16, angle: Math.PI - 0.08, thickness: 52 },
+    { y: centerY - height * 0.05, angle: Math.PI + 0.14, thickness: 56 },
+    { y: centerY + height * 0.03, angle: Math.PI - 0.05, thickness: 50 },
+    { y: centerY + height * 0.12, angle: Math.PI + 0.10, thickness: 54 },
+    { y: centerY + height * 0.22, angle: Math.PI - 0.16, thickness: 48 },
+    { y: centerY + height * 0.32, angle: Math.PI + 0.06, thickness: 44 },
   ];
 
   startPoints.forEach((sp, i) => {
-    growBranch(width + 10, sp.y, sp.angle, sp.thickness, 0, i * 0.02, 5);
+    growBranch(width + 10, sp.y, sp.angle, sp.thickness, 0, i * 0.015, 5);
   });
 
   return segments;
