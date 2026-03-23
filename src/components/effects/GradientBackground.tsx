@@ -46,12 +46,12 @@ export function GradientBackground({ className }: GradientBackgroundProps) {
     resize();
     window.addEventListener('resize', resize);
 
-    // Define blobs
+    // Define blobs — very slow, subtle movement
     const blobs: Blob[] = [
-      { x: 0.3, y: 0.3, radius: 0.4, color: 'rgba(196, 132, 62, 0.3)', speedX: 0.0003, speedY: 0.0002, phase: 0 },
-      { x: 0.7, y: 0.5, radius: 0.35, color: 'rgba(138, 155, 174, 0.25)', speedX: 0.0002, speedY: 0.0003, phase: Math.PI / 3 },
-      { x: 0.5, y: 0.7, radius: 0.3, color: 'rgba(139, 105, 20, 0.2)', speedX: 0.00025, speedY: 0.00015, phase: Math.PI / 2 },
-      { x: 0.2, y: 0.6, radius: 0.35, color: 'rgba(42, 31, 20, 0.35)', speedX: 0.00015, speedY: 0.00025, phase: Math.PI },
+      { x: 0.3, y: 0.3, radius: 0.4, color: 'rgba(196, 132, 62, 0.2)', speedX: 0.0002, speedY: 0.00015, phase: 0 },
+      { x: 0.7, y: 0.5, radius: 0.35, color: 'rgba(138, 155, 174, 0.15)', speedX: 0.00015, speedY: 0.0002, phase: Math.PI / 3 },
+      { x: 0.5, y: 0.7, radius: 0.3, color: 'rgba(139, 105, 20, 0.12)', speedX: 0.00018, speedY: 0.00012, phase: Math.PI / 2 },
+      { x: 0.2, y: 0.6, radius: 0.35, color: 'rgba(42, 31, 20, 0.2)', speedX: 0.00012, speedY: 0.00018, phase: Math.PI },
     ];
 
     let time = 0;
@@ -78,10 +78,10 @@ export function GradientBackground({ className }: GradientBackgroundProps) {
       ctx.fillStyle = '#0F1114';
       ctx.fillRect(0, 0, w, h);
 
-      // Draw blobs
+      // Draw blobs — slow, gentle drift
       blobs.forEach((blob) => {
-        const bx = w * (blob.x + Math.sin(time * blob.speedX * 1000 + blob.phase) * 0.15);
-        const by = h * (blob.y + Math.cos(time * blob.speedY * 1000 + blob.phase) * 0.1);
+        const bx = w * (blob.x + Math.sin(time * blob.speedX + blob.phase) * 0.08);
+        const by = h * (blob.y + Math.cos(time * blob.speedY + blob.phase) * 0.06);
         const br = Math.max(w, h) * blob.radius;
 
         const gradient = ctx.createRadialGradient(bx, by, 0, bx, by, br);

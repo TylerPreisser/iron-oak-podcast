@@ -2,11 +2,9 @@ import type { Metadata } from 'next';
 import { Playfair_Display, DM_Sans, JetBrains_Mono } from 'next/font/google';
 import { ThemeProvider } from '@/providers/ThemeProvider';
 import { SmoothScrollProvider } from '@/providers/SmoothScrollProvider';
-import { CursorProvider } from '@/providers/CursorProvider';
 import { Navigation } from '@/components/layout/Navigation';
 import { Footer } from '@/components/layout/Footer';
 import { ForgeIntro } from '@/components/effects/ForgeIntro';
-import { CustomCursor } from '@/components/ui/CustomCursor';
 import { IronSparks } from '@/components/effects/IronSparks';
 import './globals.css';
 
@@ -64,16 +62,13 @@ export default function RootLayout({
       <body className="min-h-screen antialiased">
         <ThemeProvider>
           <SmoothScrollProvider>
-            <CursorProvider>
               <ForgeIntro />
-              <CustomCursor />
               <IronSparks />
               <Navigation />
               <main className="flex-1">
                 {children}
               </main>
               <Footer />
-            </CursorProvider>
           </SmoothScrollProvider>
         </ThemeProvider>
       </body>
