@@ -3,6 +3,8 @@ import { Playfair_Display, DM_Sans, JetBrains_Mono } from 'next/font/google';
 import { ThemeProvider } from '@/providers/ThemeProvider';
 import { SmoothScrollProvider } from '@/providers/SmoothScrollProvider';
 import { CursorProvider } from '@/providers/CursorProvider';
+import { Navigation } from '@/components/layout/Navigation';
+import { Footer } from '@/components/layout/Footer';
 import './globals.css';
 
 const playfair = Playfair_Display({
@@ -60,7 +62,11 @@ export default function RootLayout({
         <ThemeProvider>
           <SmoothScrollProvider>
             <CursorProvider>
-              {children}
+              <Navigation />
+              <main className="flex-1">
+                {children}
+              </main>
+              <Footer />
             </CursorProvider>
           </SmoothScrollProvider>
         </ThemeProvider>
