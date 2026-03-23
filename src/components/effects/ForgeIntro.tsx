@@ -2,6 +2,7 @@
 
 import { useRef, useEffect, useState, useCallback } from 'react';
 import { cn } from '@/lib/utils';
+import { Logo } from '@/components/ui/Logo';
 
 interface Ember {
   x: number;
@@ -211,11 +212,7 @@ export function ForgeIntro() {
           textVisible ? 'opacity-100 scale-100' : 'opacity-0 scale-95'
         )}
       >
-        <h1 className="font-[family-name:var(--font-display)] text-5xl md:text-7xl lg:text-8xl font-bold tracking-wider">
-          <span className="text-[var(--accent-iron-light)]">IRON</span>
-          <span className="text-[var(--accent-oak)] mx-3">&amp;</span>
-          <span className="text-[var(--accent-oak-light)]">OAK</span>
-        </h1>
+        <Logo size="hero" />
       </div>
 
       <p className="absolute bottom-8 left-1/2 -translate-x-1/2 text-xs text-white/30 tracking-wider">

@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import { footerNavItems } from '@/data/navigation';
+import { Logo } from '@/components/ui/Logo';
 
 export function Footer() {
   return (
@@ -13,10 +14,8 @@ export function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12">
           {/* Brand */}
           <div className="lg:col-span-1">
-            <Link href="/" className="flex items-center gap-0 text-xl font-bold tracking-wider mb-4">
-              <span className="text-[var(--accent-iron)]">IRON</span>
-              <span className="text-[var(--accent-oak)] mx-1">&amp;</span>
-              <span className="text-[var(--accent-oak)]">OAK</span>
+            <Link href="/" className="mb-4 inline-block">
+              <Logo />
             </Link>
             <p className="text-sm text-[var(--text-secondary)] leading-relaxed">
               Where iron sharpens iron and deep roots hold.

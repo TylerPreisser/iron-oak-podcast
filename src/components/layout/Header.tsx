@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { cn } from '@/lib/utils';
+import { Logo } from '@/components/ui/Logo';
 import { NAV_SCROLL_THRESHOLD } from '@/lib/constants';
 
 export function Header() {
@@ -25,17 +26,10 @@ export function Header() {
       )}
     >
       <div className="container-default flex items-center justify-between h-16 lg:h-20">
-        {/* Logo */}
-        <button
-          onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-          className="flex items-center gap-0 text-xl font-bold tracking-wider"
-        >
-          <span className="text-[var(--accent-iron)]">IRON</span>
-          <span className="text-[var(--accent-oak)] mx-1">&amp;</span>
-          <span className="text-[var(--accent-oak)]">OAK</span>
+        <button onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}>
+          <Logo />
         </button>
 
-        {/* Subscribe CTA */}
         <button
           onClick={() => {
             const el = document.getElementById('subscribe');
