@@ -2,7 +2,6 @@
 
 import { useRef } from 'react';
 import { useGSAP } from '@/hooks/useGSAP';
-import { cn } from '@/lib/utils';
 
 function AnvilSVG({ className }: { className?: string }) {
   return (
@@ -20,170 +19,76 @@ function AnvilSVG({ className }: { className?: string }) {
   );
 }
 
-function ImpactSpark({ delay, angle, distance }: { delay: number; angle: number; distance: number }) {
-  const x = Math.cos(angle) * distance;
-  const y = Math.sin(angle) * distance;
-
-  return (
-    <div
-      className="absolute w-1.5 h-1.5 rounded-full bg-[var(--accent-oak)]"
-      style={{
-        left: '50%',
-        top: '65%',
-        opacity: 0,
-        animation: `spark-fly 0.6s ${delay}s ease-out forwards`,
-        // @ts-expect-error CSS custom properties
-        '--spark-x': `${x}px`,
-        '--spark-y': `${y}px`,
-      }}
-    />
-  );
-}
-
 export function IronAnvilSection() {
   const sectionRef = useRef<HTMLElement>(null);
   const anvilRef = useRef<HTMLDivElement>(null);
   const textRef = useRef<HTMLDivElement>(null);
-  const sparksRef = useRef<HTMLDivElement>(null);
 
   useGSAP((gsap, ScrollTrigger) => {
     if (!sectionRef.current || !anvilRef.current || !textRef.current) return;
 
-    // Shorter pin — 120%
-    ScrollTrigger.create({
-      trigger: sectionRef.current,
-      start: 'top top',
-      end: '+=120%',
-      pin: true,
-    });
-
-    // Anvil drops IMMEDIATELY on enter — 0% to 20%
-    gsap.fromTo(anvilRef.current,
-      { y: -400, opacity: 0, scale: 0.8 },
-      {
-        y: 0,
-        opacity: 1,
-        scale: 1,
-        ease: 'bounce.out',
-        scrollTrigger: {
-          trigger: sectionRef.current,
-          start: '0% top',
-          end: '20% top',
-          scrub: 1,
-        },
-      }
-    );
-
-    // Impact shake
-    gsap.fromTo(sectionRef.current.querySelector('.anvil-content'),
-      { x: 0 },
-      {
-        x: 4,
-        duration: 0.05,
-        repeat: 5,
-        yoyo: true,
-        ease: 'none',
-        scrollTrigger: {
-          trigger: sectionRef.current,
-          start: '18% top',
-          end: '22% top',
-          scrub: false,
-          toggleActions: 'play none none none',
-        },
-      }
-    );
-
-    // Sparks at impact
-    if (sparksRef.current) {
-      gsap.fromTo(sparksRef.current,
-        { opacity: 0 },
-        {
-          opacity: 1,
-          duration: 0.1,
-          scrollTrigger: {
-            trigger: sectionRef.current,
-            start: '18% top',
-            end: '20% top',
-            toggleActions: 'play none none none',
-          },
-        }
-      );
-    }
-
-    // Text reveals right after anvil lands — 22% to 50%
     const textElements = textRef.current.querySelectorAll('.why-text-item');
-    textElements.forEach((el, i) => {
-      gsap.fromTo(el,
-        { opacity: 0, x: 40 },
-        {
-          opacity: 1,
-          x: 0,
-          ease: 'power3.out',
-          scrollTrigger: {
-            trigger: sectionRef.current,
-            start: `${22 + i * 7}% top`,
-            end: `${32 + i * 7}% top`,
-            scrub: 1,
-          },
-        }
-      );
-    });
 
-    // Fade out
-    gsap.to(sectionRef.current.querySelector('.anvil-content'), {
-      opacity: 0,
-      y: -30,
+    // ONE timeline, ONE ScrollTrigger
+    const tl = gsap.timeline({
       scrollTrigger: {
         trigger: sectionRef.current,
-        start: '70% top',
-        end: '90% top',
-        scrub: true,
+        start: 'top top',
+        end: '+=120%',
+        pin: true,
+        scrub: 0.5,
       },
     });
-  }, []);
 
-  const sparks = Array.from({ length: 12 }, () => ({
-    delay: Math.random() * 0.2,
-    angle: -Math.PI + Math.random() * Math.PI,
-    distance: 30 + Math.random() * 80,
-  }));
+    // 0.0–0.25: Anvil drops and slams
+    tl.fromTo(anvilRef.current,
+      { y: -300, opacity: 0, scale: 0.85 },
+      { y: 0, opacity: 1, scale: 1, duration: 0.25, ease: 'bounce.out' },
+      0
+    );
+
+    // 0.25–0.55: Text reveals staggered right after anvil lands
+    textElements.forEach((el, i) => {
+      tl.fromTo(el,
+        { opacity: 0, x: 30 },
+        { opacity: 1, x: 0, duration: 0.1, ease: 'power3.out' },
+        0.25 + i * 0.06
+      );
+    });
+
+    // 0.75–1.0: Fade everything out
+    tl.to(sectionRef.current.querySelector('.anvil-content'),
+      { opacity: 0, y: -20, duration: 0.15 },
+      0.8
+    );
+  }, []);
 
   return (
     <section
       ref={sectionRef}
       className="relative min-h-screen bg-[var(--bg-secondary)] overflow-hidden"
     >
-      <style jsx>{`
-        @keyframes spark-fly {
-          0% { opacity: 1; transform: translate(0, 0) scale(1); }
-          100% { opacity: 0; transform: translate(var(--spark-x), var(--spark-y)) scale(0); }
-        }
-      `}</style>
-
       <div className="anvil-content absolute inset-0 flex items-center">
         <div className="container-default flex flex-col lg:flex-row items-center gap-12 lg:gap-20">
-          <div className="w-full lg:w-1/2 flex justify-center relative">
-            <div ref={anvilRef} className="relative w-[280px] md:w-[350px]">
+          {/* Anvil */}
+          <div className="w-full lg:w-1/2 flex justify-center">
+            <div ref={anvilRef} className="relative w-[280px] md:w-[350px] opacity-0">
               <AnvilSVG className="w-full h-auto drop-shadow-[0_20px_40px_rgba(138,155,174,0.15)]" />
-              <div ref={sparksRef} className="absolute inset-0 pointer-events-none opacity-0">
-                {sparks.map((spark, i) => (
-                  <ImpactSpark key={i} {...spark} />
-                ))}
-              </div>
             </div>
           </div>
 
+          {/* Text */}
           <div ref={textRef} className="w-full lg:w-1/2">
-            <span className="why-text-item block font-[family-name:var(--font-accent)] text-sm tracking-[0.2em] uppercase text-[var(--accent-iron-light)] mb-4">
+            <span className="why-text-item block font-[family-name:var(--font-accent)] text-sm tracking-[0.2em] uppercase text-[var(--accent-iron-light)] mb-4 opacity-0">
               Our Purpose
             </span>
-            <h2 className="why-text-item font-[family-name:var(--font-display)] text-[var(--text-h1)] text-[var(--text-primary)] leading-tight mb-6">
+            <h2 className="why-text-item font-[family-name:var(--font-display)] text-[var(--text-h1)] text-[var(--text-primary)] leading-tight mb-6 opacity-0">
               Why Are We Here?
             </h2>
-            <p className="why-text-item text-lg text-[var(--text-secondary)] leading-relaxed mb-4 max-w-lg">
+            <p className="why-text-item text-lg text-[var(--text-secondary)] leading-relaxed mb-4 max-w-lg opacity-0">
               Because faith that can&apos;t be questioned isn&apos;t faith — it&apos;s habit. Because the people sitting in pews deserve more than bumper-sticker theology. Because iron sharpens iron, and that means friction.
             </p>
-            <p className="why-text-item text-lg text-[var(--text-secondary)] leading-relaxed max-w-lg">
+            <p className="why-text-item text-lg text-[var(--text-secondary)] leading-relaxed max-w-lg opacity-0">
               We&apos;re here to take the hardest doctrines of the Christian faith, lay them on the anvil, and strike until what&apos;s true rings clear.
             </p>
           </div>

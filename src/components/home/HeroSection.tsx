@@ -34,7 +34,7 @@ export function HeroSection() {
       <div className="relative z-10 container-default text-center max-w-4xl mx-auto px-6">
         {/* Logo — same component as everywhere */}
         <div className="hero-logo mb-8">
-          <Logo size="lg" />
+          <Logo size="hero" />
         </div>
 
         <h1 className="hero-headline font-[family-name:var(--font-display)] text-[var(--text-hero)] leading-[1.1] text-[var(--text-primary)] mb-6">

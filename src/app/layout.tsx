@@ -6,6 +6,7 @@ import { Header } from '@/components/layout/Header';
 import { Footer } from '@/components/layout/Footer';
 import { ForgeIntro } from '@/components/effects/ForgeIntro';
 import { IronSparks } from '@/components/effects/IronSparks';
+import { ScrollToTop } from '@/components/ui/ScrollToTop';
 import './globals.css';
 
 const playfair = Playfair_Display({
@@ -62,6 +63,7 @@ export default function RootLayout({
       <body className="min-h-screen antialiased">
         <ThemeProvider>
           <SmoothScrollProvider>
+              <ScrollToTop />
               <ForgeIntro />
               <IronSparks />
               <Header />

@@ -2,7 +2,6 @@
 
 import { useRef } from 'react';
 import { useGSAP } from '@/hooks/useGSAP';
-import { cn } from '@/lib/utils';
 
 const rootPaths = [
   'M 800 300 C 700 290, 600 320, 480 300 C 380 285, 280 310, 150 280 C 80 265, 20 275, -20 260',
@@ -25,6 +24,7 @@ export function OakMissionSection() {
 
     const paths = svgRef.current.querySelectorAll('.root-path');
 
+    // Set up stroke dash
     paths.forEach((path) => {
       const el = path as SVGPathElement;
       const length = el.getTotalLength();
@@ -32,59 +32,42 @@ export function OakMissionSection() {
       el.style.strokeDashoffset = `${length}`;
     });
 
-    // Shorter pin — 120% scroll distance
-    ScrollTrigger.create({
-      trigger: sectionRef.current,
-      start: 'top top',
-      end: '+=120%',
-      pin: true,
+    const textElements = textRef.current.querySelectorAll('.mission-text-item');
+
+    // ONE timeline, ONE ScrollTrigger
+    const tl = gsap.timeline({
+      scrollTrigger: {
+        trigger: sectionRef.current,
+        start: 'top top',
+        end: '+=120%',
+        pin: true,
+        scrub: 0.5,
+      },
     });
 
-    // Roots draw in IMMEDIATELY — all start at 0%, stagger just slightly
+    // 0.0–0.5: Roots draw in (staggered slightly) + text fades in together
     paths.forEach((path, i) => {
       const el = path as SVGPathElement;
-      gsap.to(el, {
-        strokeDashoffset: 0,
-        ease: 'power2.inOut',
-        scrollTrigger: {
-          trigger: sectionRef.current,
-          start: `${i * 2}% top`,
-          end: `${25 + i * 3}% top`,
-          scrub: 1,
-        },
-      });
-    });
-
-    // Text fades in right away alongside roots
-    const textElements = textRef.current.querySelectorAll('.mission-text-item');
-    textElements.forEach((el, i) => {
-      gsap.fromTo(el,
-        { opacity: 0, x: -40 },
-        {
-          opacity: 1,
-          x: 0,
-          ease: 'power3.out',
-          scrollTrigger: {
-            trigger: sectionRef.current,
-            start: `${i * 8}% top`,
-            end: `${15 + i * 8}% top`,
-            scrub: 1,
-          },
-        }
+      tl.to(el,
+        { strokeDashoffset: 0, duration: 0.35, ease: 'power2.inOut' },
+        i * 0.02 // tiny stagger — all start nearly together
       );
     });
 
-    // Fade out at end
-    gsap.to(sectionRef.current.querySelector('.mission-content'), {
-      opacity: 0,
-      y: -30,
-      scrollTrigger: {
-        trigger: sectionRef.current,
-        start: '70% top',
-        end: '90% top',
-        scrub: true,
-      },
+    // Text comes in alongside roots
+    textElements.forEach((el, i) => {
+      tl.fromTo(el,
+        { opacity: 0, x: -30 },
+        { opacity: 1, x: 0, duration: 0.12, ease: 'power3.out' },
+        0.05 + i * 0.08
+      );
     });
+
+    // 0.7–1.0: Hold, then fade out
+    tl.to(sectionRef.current.querySelector('.mission-content'),
+      { opacity: 0, y: -20, duration: 0.15 },
+      0.8
+    );
   }, []);
 
   return (
@@ -94,16 +77,16 @@ export function OakMissionSection() {
     >
       <div className="mission-content absolute inset-0 flex items-center">
         <div ref={textRef} className="w-full lg:w-1/2 px-6 lg:pl-12 xl:pl-20 relative z-10">
-          <span className="mission-text-item block font-[family-name:var(--font-accent)] text-sm tracking-[0.2em] uppercase text-[var(--accent-oak)] mb-4">
+          <span className="mission-text-item block font-[family-name:var(--font-accent)] text-sm tracking-[0.2em] uppercase text-[var(--accent-oak)] mb-4 opacity-0">
             Our Mission
           </span>
-          <h2 className="mission-text-item font-[family-name:var(--font-display)] text-[var(--text-h1)] text-[var(--text-primary)] leading-tight mb-6">
+          <h2 className="mission-text-item font-[family-name:var(--font-display)] text-[var(--text-h1)] text-[var(--text-primary)] leading-tight mb-6 opacity-0">
             What&apos;s Our Mission?
           </h2>
-          <p className="mission-text-item text-lg text-[var(--text-secondary)] leading-relaxed mb-4 max-w-lg">
+          <p className="mission-text-item text-lg text-[var(--text-secondary)] leading-relaxed mb-4 max-w-lg opacity-0">
             To create a space where the hardest questions about faith aren&apos;t avoided — they&apos;re welcomed. Where Scripture is the foundation, not a prop. Where honesty matters more than polish.
           </p>
-          <p className="mission-text-item text-lg text-[var(--text-secondary)] leading-relaxed max-w-lg">
+          <p className="mission-text-item text-lg text-[var(--text-secondary)] leading-relaxed max-w-lg opacity-0">
             Iron &amp; Oak exists to sharpen believers and invite skeptics into the same conversation — one that doesn&apos;t flinch.
           </p>
         </div>
