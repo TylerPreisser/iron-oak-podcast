@@ -66,7 +66,7 @@ export function HeroSection() {
           {/* Logo — right side; smaller on mobile to not crowd text */}
           <div className="hero-logo flex-shrink-0">
             <Image
-              src={assetPath("/images/iron-oak-logo.png")}
+              src={assetPath("/images/iron-oak-logo.webp")}
               alt="The Iron & Oak Podcast"
               width={400}
               height={400}

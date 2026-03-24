@@ -209,7 +209,7 @@ export function ForgeIntro() {
         )}
       >
         <Image
-            src={assetPath("/images/iron-oak-logo.png")}
+            src={assetPath("/images/iron-oak-logo.webp")}
             alt="The Iron & Oak Podcast"
             width={500}
             height={500}

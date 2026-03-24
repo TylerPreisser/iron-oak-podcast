@@ -52,13 +52,13 @@ export const metadata: Metadata = {
     siteName: 'The Iron & Oak Podcast',
     title: 'The Iron & Oak Podcast | Faith Forged in Honesty',
     description: 'Hard questions. Honest faith. No easy answers. Tyler Preisser and Lincoln Myers dig into Scripture, doubt, and the questions most people are afraid to ask.',
-    images: [{ url: '/iron-oak-podcast/images/iron-oak-logo.png', width: 1200, height: 1200, alt: 'The Iron & Oak Podcast' }],
+    images: [{ url: '/iron-oak-podcast/images/iron-oak-logo.webp', width: 1200, height: 1200, alt: 'The Iron & Oak Podcast' }],
   },
   twitter: {
     card: 'summary_large_image',
     title: 'The Iron & Oak Podcast',
     description: 'Hard questions. Honest faith. No easy answers. Where iron sharpens iron and deep roots hold.',
-    images: ['/iron-oak-podcast/images/iron-oak-logo.png'],
+    images: ['/iron-oak-podcast/images/iron-oak-logo.webp'],
   },
   robots: {
     index: true,
