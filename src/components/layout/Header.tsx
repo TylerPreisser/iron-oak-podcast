@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { assetPath } from "@/lib/basePath";
 import Image from 'next/image';
 import { cn } from '@/lib/utils';
 import { NAV_SCROLL_THRESHOLD } from '@/lib/constants';
@@ -28,7 +29,7 @@ export function Header() {
       <div className="container-default flex items-center justify-between h-16 lg:h-20">
         <button onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}>
           <Image
-            src="/images/iron-oak-logo.png"
+            src={assetPath("/images/iron-oak-logo.png")}
             alt="Iron & Oak"
             width={120}
             height={120}

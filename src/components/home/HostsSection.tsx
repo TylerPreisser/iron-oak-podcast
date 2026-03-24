@@ -2,11 +2,12 @@
 
 import { useRef, useState, useEffect } from 'react';
 import Image from 'next/image';
+import { assetPath } from "@/lib/basePath";
 import { hosts } from '@/data/hosts';
 import { cn } from '@/lib/utils';
 
 const hostImages: Record<string, string> = {
-  'Tyler Preisser': '/images/tyler-headshot.webp',
+  'Tyler Preisser': assetPath('/images/tyler-headshot.webp'),
   // Drop Lincoln's headshot at /public/images/lincoln-headshot.webp to activate
   // 'Lincoln Myers': '/images/lincoln-headshot.webp',
 };

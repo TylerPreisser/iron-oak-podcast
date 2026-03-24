@@ -1,6 +1,7 @@
 'use client';
 
 import { useRef, useEffect, useState, useCallback } from 'react';
+import { assetPath } from "@/lib/basePath";
 import Image from 'next/image';
 import { cn } from '@/lib/utils';
 
@@ -208,7 +209,7 @@ export function ForgeIntro() {
         )}
       >
         <Image
-            src="/images/iron-oak-logo.png"
+            src={assetPath("/images/iron-oak-logo.png")}
             alt="The Iron & Oak Podcast"
             width={500}
             height={500}

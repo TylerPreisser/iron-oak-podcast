@@ -1,6 +1,7 @@
 'use client';
 
 import Image from 'next/image';
+import { assetPath } from "@/lib/basePath";
 
 export function Footer() {
   return (
@@ -16,7 +17,7 @@ export function Footer() {
           {/* Brand */}
           <div>
             <a href="/" className="mb-4 inline-block">
-              <Image src="/images/iron-oak-logo.png" alt="Iron & Oak" width={120} height={120} className="w-14 h-14" />
+              <Image src={assetPath("/images/iron-oak-logo.png")} alt="Iron & Oak" width={120} height={120} className="w-14 h-14" />
             </a>
             <p className="text-sm text-[var(--text-secondary)] leading-relaxed">
               Where iron sharpens iron and deep roots hold.
