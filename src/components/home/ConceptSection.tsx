@@ -169,29 +169,42 @@ export function ConceptSection() {
       <div className="sticky top-0 h-screen overflow-hidden">
         <canvas ref={canvasRef} className="absolute inset-0 z-0" />
 
-        <div className="absolute inset-0 z-10 flex items-center justify-center">
-          <div className="w-full max-w-3xl px-8">
-            <div
-              style={{
-                transform: `translateY(${100 - scrollProgress * 250}%)`,
-              }}
-            >
-              {lines.map((line, i) => {
-                const lineProgress = scrollProgress * lines.length - i;
-                const opacity = lineProgress < 0 ? 0 : lineProgress > 2.5 ? 0 : Math.min(1, lineProgress) * Math.max(0, 1 - (lineProgress - 1.5));
+        <div className="absolute inset-0 z-10">
+          {lines.map((line, i) => {
+            // Each line gets its own slice of scroll progress
+            const lineStart = i / lines.length;
+            const linePeak = (i + 0.4) / lines.length;
+            const lineEnd = (i + 0.9) / lines.length;
 
-                return (
-                  <p
-                    key={i}
-                    className="font-[family-name:var(--font-display)] text-[var(--text-h2)] leading-relaxed text-[var(--text-primary)] text-center mb-32"
-                    style={{ opacity }}
-                  >
-                    {line}
-                  </p>
-                );
-              })}
-            </div>
-          </div>
+            // Opacity: fade in → hold → fade out
+            let opacity = 0;
+            if (scrollProgress >= lineStart && scrollProgress <= lineEnd) {
+              if (scrollProgress < linePeak) {
+                opacity = (scrollProgress - lineStart) / (linePeak - lineStart);
+              } else {
+                opacity = 1 - (scrollProgress - linePeak) / (lineEnd - linePeak);
+              }
+            }
+            opacity = Math.max(0, Math.min(1, opacity));
+
+            // Y position: each line enters from below center, sits at center, exits above
+            const lineMid = (lineStart + lineEnd) / 2;
+            const yOffset = (scrollProgress - lineMid) * -120; // negative = moves up
+
+            return (
+              <p
+                key={i}
+                className="absolute left-0 right-0 px-8 font-[family-name:var(--font-display)] text-[var(--text-h2)] leading-relaxed text-[var(--text-primary)] text-center max-w-3xl mx-auto"
+                style={{
+                  top: '50%',
+                  transform: `translateY(calc(-50% + ${yOffset}vh))`,
+                  opacity,
+                }}
+              >
+                {line}
+              </p>
+            );
+          })}
         </div>
 
         <div className="absolute top-0 left-0 right-0 h-32 bg-gradient-to-b from-[var(--bg-primary)] to-transparent z-20 pointer-events-none" />
