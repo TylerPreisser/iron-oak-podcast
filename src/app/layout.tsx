@@ -38,22 +38,31 @@ export const viewport: Viewport = {
 
 export const metadata: Metadata = {
   title: {
-    default: 'The Iron & Oak Podcast',
-    template: '%s | Iron & Oak',
+    default: 'The Iron & Oak Podcast | Faith Forged in Honesty',
+    template: '%s | Iron & Oak Podcast',
   },
-  description: 'Tyler Preisser and Lincoln Myers wrestle with the hardest questions about faith, God, and belief. Rooted in Scripture. Forged in honesty.',
-  metadataBase: new URL('https://ironandoak.fm'),
+  description: 'Tyler Preisser and Lincoln Myers wrestle with the hardest questions about faith, God, and belief. 12 episodes. 109 questions. Rooted in Scripture. Forged in honesty. A podcast from Hays, Kansas.',
+  keywords: ['podcast', 'faith', 'Christianity', 'Bible', 'Scripture', 'theology', 'Iron and Oak', 'Tyler Preisser', 'Lincoln Myers', 'Hays Kansas', 'Christian podcast'],
+  authors: [{ name: 'Tyler Preisser' }, { name: 'Lincoln Myers' }],
+  creator: 'Iron & Oak Podcast',
+  metadataBase: new URL('https://tpreisser.github.io'),
   openGraph: {
     type: 'website',
     locale: 'en_US',
     siteName: 'The Iron & Oak Podcast',
-    title: 'The Iron & Oak Podcast',
-    description: 'Where iron sharpens iron and deep roots hold.',
+    title: 'The Iron & Oak Podcast | Faith Forged in Honesty',
+    description: 'Hard questions. Honest faith. No easy answers. Tyler Preisser and Lincoln Myers dig into Scripture, doubt, and the questions most people are afraid to ask.',
+    images: [{ url: '/iron-oak-podcast/images/iron-oak-logo.png', width: 1200, height: 1200, alt: 'The Iron & Oak Podcast' }],
   },
   twitter: {
     card: 'summary_large_image',
     title: 'The Iron & Oak Podcast',
-    description: 'Where iron sharpens iron and deep roots hold.',
+    description: 'Hard questions. Honest faith. No easy answers. Where iron sharpens iron and deep roots hold.',
+    images: ['/iron-oak-podcast/images/iron-oak-logo.png'],
+  },
+  robots: {
+    index: true,
+    follow: true,
   },
 };
 
