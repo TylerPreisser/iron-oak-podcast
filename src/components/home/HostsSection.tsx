@@ -43,7 +43,7 @@ function FadeIn({ children, className, delay = 0 }: { children: React.ReactNode;
 export function HostsSection() {
   return (
     <section id="hosts" className="section-padding bg-[var(--bg-primary)]">
-      <div className="max-w-6xl mx-auto px-8 md:px-12 lg:px-16">
+      <div className="max-w-6xl mx-auto px-4 sm:px-8 md:px-12 lg:px-16">
         <FadeIn className="text-center mb-16">
           <span className="font-[family-name:var(--font-accent)] text-sm tracking-[0.2em] uppercase text-[var(--accent-oak)]">
             Your Hosts

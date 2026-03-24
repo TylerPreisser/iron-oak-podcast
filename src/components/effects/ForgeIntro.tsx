@@ -217,8 +217,12 @@ export function ForgeIntro() {
           />
       </div>
 
-      <p className="absolute bottom-8 left-1/2 -translate-x-1/2 text-xs text-white/30 tracking-wider">
-        Click to skip
+      {/* bottom + safe area: accounts for iOS home indicator on notched devices */}
+      <p
+        className="absolute bottom-8 left-1/2 -translate-x-1/2 text-xs text-white/30 tracking-wider"
+        style={{ marginBottom: 'env(safe-area-inset-bottom)' }}
+      >
+        Tap to skip
       </p>
     </div>
   );

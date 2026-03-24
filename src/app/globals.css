@@ -60,10 +60,14 @@
   --shadow-glow: 0 0 40px rgba(107, 66, 38, 0.12);
 
   /* Typography Scale */
-  --text-hero: clamp(3rem, 8vw, 7rem);
-  --text-h1: clamp(2.25rem, 5vw, 4rem);
-  --text-h2: clamp(1.75rem, 3.5vw, 2.5rem);
+  /* Hero: 2.5rem (40px) on iPhone SE → 7rem on desktop */
+  --text-hero: clamp(2.5rem, 8vw, 7rem);
+  /* H1: 2rem (32px) on mobile → 4rem on desktop */
+  --text-h1: clamp(2rem, 5vw, 4rem);
+  /* H2: 1.5rem (24px) on mobile → 2.5rem on desktop */
+  --text-h2: clamp(1.5rem, 3.5vw, 2.5rem);
   --text-h3: clamp(1.25rem, 2vw, 1.75rem);
+  /* Body: always at least 1rem (16px) — iOS Safari minimum for no auto-zoom */
   --text-body: clamp(1rem, 1.1vw, 1.125rem);
   --text-small: clamp(0.875rem, 0.9vw, 0.9375rem);
   --text-xs: 0.75rem;
@@ -110,7 +114,12 @@
 
 html {
   scroll-behavior: auto;
-  overflow-y: scroll; /* always show scrollbar to prevent layout jolt */
+  overflow-y: scroll; /* always show scrollbar to prevent layout jolt — desktop only */
+  /* iOS Safari: prevent horizontal overflow from child elements */
+  overflow-x: hidden;
+  /* Respect safe area insets for notched devices */
+  padding-left: env(safe-area-inset-left);
+  padding-right: env(safe-area-inset-right);
 }
 
 body {
@@ -118,6 +127,10 @@ body {
   color: var(--text-primary);
   font-family: "DM Sans", sans-serif;
   line-height: 1.6;
+  /* Prevent horizontal scroll from canvas/absolute elements exceeding viewport */
+  overflow-x: hidden;
+  /* iOS Safari: enable momentum scrolling */
+  -webkit-overflow-scrolling: touch;
 }
 
 ::selection {
@@ -131,13 +144,14 @@ body {
 .container-default {
   max-width: var(--container-max);
   margin: 0 auto;
-  padding: 0 1.5rem;
+  /* clamp: min 1rem on tiny phones, 1.5rem standard, max 1.5rem */
+  padding: 0 clamp(1rem, 4vw, 1.5rem);
 }
 
 .container-wide {
   max-width: var(--container-wide);
   margin: 0 auto;
-  padding: 0 1.5rem;
+  padding: 0 clamp(1rem, 4vw, 1.5rem);
 }
 
 .section-padding {
@@ -157,6 +171,23 @@ body {
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
+}
+
+/* ------------------------------------------------------------
+   iOS Safari — Backdrop Filter Compatibility
+   Safari requires -webkit-backdrop-filter alongside backdrop-filter.
+   Applied globally to any element using Tailwind's backdrop-blur utility.
+   ------------------------------------------------------------ */
+[class*="backdrop-blur"] {
+  -webkit-backdrop-filter: var(--tw-backdrop-blur) var(--tw-backdrop-brightness) var(--tw-backdrop-contrast) var(--tw-backdrop-grayscale) var(--tw-backdrop-hue-rotate) var(--tw-backdrop-invert) var(--tw-backdrop-opacity) var(--tw-backdrop-saturate) var(--tw-backdrop-sepia);
+}
+
+/* ------------------------------------------------------------
+   iOS Safari — Tap Highlight
+   Remove the grey flash on tap for all interactive elements
+   ------------------------------------------------------------ */
+a, button, [role="button"] {
+  -webkit-tap-highlight-color: transparent;
 }
 
 /* ------------------------------------------------------------

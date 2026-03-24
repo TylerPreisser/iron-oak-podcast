@@ -53,10 +53,12 @@ export function Navigation() {
       <nav
         className={cn(
           'fixed top-0 left-0 right-0 z-50 transition-all duration-300',
+          // pt-safe: adds env(safe-area-inset-top) for Dynamic Island / notch on iOS
           scrolled
             ? 'backdrop-blur-[12px] bg-[var(--bg-primary)]/80 border-b border-[var(--border-default)]'
             : 'bg-transparent'
         )}
+        style={{ paddingTop: 'env(safe-area-inset-top)' }}
       >
         <div className="container-default flex items-center justify-between h-16 lg:h-20">
           {/* Logo — scrolls to top */}

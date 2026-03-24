@@ -270,24 +270,32 @@ export function OakMissionSection() {
       className="relative min-h-screen bg-[var(--bg-primary)] overflow-hidden"
     >
       <div className="absolute inset-0 flex items-center">
-        {/* Text — left side */}
-        <div ref={textRef} className="w-full lg:w-[45%] px-6 lg:pl-12 xl:pl-20 relative z-10">
+        {/* Text — left side
+            On mobile: full-width with extra right padding so roots behind don't cover text.
+            On lg+: 45% width, roots fill the right side.
+        */}
+        <div ref={textRef} className="w-full lg:w-[45%] px-6 pr-8 sm:pr-6 lg:pl-12 xl:pl-20 relative z-10">
           <span className="mission-text-item block font-[family-name:var(--font-accent)] text-sm tracking-[0.2em] uppercase text-[var(--accent-oak)] mb-4 opacity-0">
             Our Mission
           </span>
           <h2 className="mission-text-item font-[family-name:var(--font-display)] text-[var(--text-h1)] text-[var(--text-primary)] leading-tight mb-6 opacity-0">
             What&apos;s Our Mission?
           </h2>
-          <p className="mission-text-item text-lg text-[var(--text-secondary)] leading-relaxed mb-4 max-w-lg opacity-0">
+          {/* text-base on mobile (16px) — stays readable; text-lg on md+ */}
+          <p className="mission-text-item text-base md:text-lg text-[var(--text-secondary)] leading-relaxed mb-4 max-w-lg opacity-0">
             To create a space where the hardest questions about faith aren&apos;t avoided — they&apos;re welcomed. Where Scripture is the foundation, not a prop. Where honesty matters more than polish.
           </p>
-          <p className="mission-text-item text-lg text-[var(--text-secondary)] leading-relaxed max-w-lg opacity-0">
+          <p className="mission-text-item text-base md:text-lg text-[var(--text-secondary)] leading-relaxed max-w-lg opacity-0">
             Iron &amp; Oak exists to sharpen believers and invite skeptics into the same conversation — one that doesn&apos;t flinch.
           </p>
         </div>
 
-        {/* Roots — Canvas, right side, extends past viewport to avoid hard clip */}
-        <div className="absolute -right-[15%] top-0 bottom-0 w-[80%] lg:w-[73%] pointer-events-none">
+        {/* Roots Canvas — right side.
+            Mobile: positioned further right (w-[90%] -right-[30%]) so roots are partially visible
+            as a background element but don't dominate the readable text area.
+            lg+: normal positioning w-[73%] -right-[15%].
+        */}
+        <div className="absolute -right-[30%] lg:-right-[15%] top-0 bottom-0 w-[90%] lg:w-[73%] pointer-events-none opacity-40 lg:opacity-100">
           <canvas ref={canvasRef} className="w-full h-full" />
         </div>
       </div>

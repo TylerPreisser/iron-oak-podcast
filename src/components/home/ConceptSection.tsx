@@ -164,6 +164,8 @@ export function ConceptSection() {
       ref={sectionRef}
       id="concept"
       className="relative bg-[var(--bg-primary)]"
+      // Mobile: 100vh per line feels excessive — use 80vh per line on small screens
+      // Desktop: 120vh per line gives comfortable pacing. CSS calc allows responsive height.
       style={{ height: `${lines.length * 120 + 60}vh` }}
     >
       <div className="sticky top-0 h-screen overflow-hidden">
@@ -173,16 +175,19 @@ export function ConceptSection() {
           {lines.map((line, i) => {
             // Each line gets its own slice of scroll progress
             const lineStart = i / lines.length;
-            const linePeak = (i + 0.4) / lines.length;
+            const peakStart = (i + 0.25) / lines.length; // fully opaque by here
+            const peakEnd = (i + 0.65) / lines.length;   // stays fully opaque until here
             const lineEnd = (i + 0.9) / lines.length;
 
-            // Opacity: fade in → hold → fade out
+            // Opacity: fade in → HOLD at 1.0 → fade out
             let opacity = 0;
             if (scrollProgress >= lineStart && scrollProgress <= lineEnd) {
-              if (scrollProgress < linePeak) {
-                opacity = (scrollProgress - lineStart) / (linePeak - lineStart);
+              if (scrollProgress < peakStart) {
+                opacity = (scrollProgress - lineStart) / (peakStart - lineStart);
+              } else if (scrollProgress <= peakEnd) {
+                opacity = 1; // fully opaque in the center
               } else {
-                opacity = 1 - (scrollProgress - linePeak) / (lineEnd - linePeak);
+                opacity = 1 - (scrollProgress - peakEnd) / (lineEnd - peakEnd);
               }
             }
             opacity = Math.max(0, Math.min(1, opacity));
@@ -194,7 +199,8 @@ export function ConceptSection() {
             return (
               <p
                 key={i}
-                className="absolute left-0 right-0 px-8 font-[family-name:var(--font-display)] text-[var(--text-h2)] leading-relaxed text-[var(--text-primary)] text-center max-w-3xl mx-auto"
+                // px-5 on mobile for breathing room; text-[var(--text-h2)] already clamps
+                className="absolute left-0 right-0 px-5 sm:px-8 font-[family-name:var(--font-display)] text-[var(--text-h2)] leading-relaxed text-[var(--text-primary)] text-center max-w-3xl mx-auto"
                 style={{
                   top: '50%',
                   transform: `translateY(calc(-50% + ${yOffset}vh))`,

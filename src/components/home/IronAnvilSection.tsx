@@ -544,6 +544,10 @@ export function IronAnvilSection() {
       className="relative min-h-screen bg-[var(--bg-primary)] overflow-hidden"
     >
       <div className="absolute inset-0 flex items-center">
+        {/* Text — left side.
+            Mobile: full-width so text is fully readable.
+            lg+: 42% so canvas has room on the right.
+        */}
         <div ref={textRef} className="w-full lg:w-[42%] px-6 lg:pl-12 xl:pl-20 relative z-10">
           <span className="why-text-item block font-[family-name:var(--font-accent)] text-sm tracking-[0.2em] uppercase text-[var(--accent-iron-light)] mb-4 opacity-0">
             Our Purpose
@@ -551,15 +555,22 @@ export function IronAnvilSection() {
           <h2 className="why-text-item font-[family-name:var(--font-display)] text-[var(--text-h1)] text-[var(--text-primary)] leading-tight mb-6 opacity-0">
             Why Are We Here?
           </h2>
-          <p className="why-text-item text-lg text-[var(--text-secondary)] leading-relaxed mb-4 max-w-lg opacity-0">
+          {/* text-base on mobile (16px minimum for iOS no-zoom); text-lg on md+ */}
+          <p className="why-text-item text-base md:text-lg text-[var(--text-secondary)] leading-relaxed mb-4 max-w-lg opacity-0">
             Because faith that can&apos;t be questioned isn&apos;t faith — it&apos;s habit. Because the people sitting in pews deserve more than bumper-sticker theology. Because iron sharpens iron, and that means friction.
           </p>
-          <p className="why-text-item text-lg text-[var(--text-secondary)] leading-relaxed max-w-lg opacity-0">
+          <p className="why-text-item text-base md:text-lg text-[var(--text-secondary)] leading-relaxed max-w-lg opacity-0">
             We&apos;re here to take the hardest doctrines of the Christian faith, lay them on the anvil, and strike until what&apos;s true rings clear.
           </p>
         </div>
 
-        <div className="absolute right-0 top-0 bottom-0 w-[62%] lg:w-[58%] pointer-events-none">
+        {/* Canvas — right side.
+            Mobile: reduced opacity so it reads as a background texture behind the text,
+            not a competing element. The bucket animation renders at w*0.88 in canvas coords,
+            which on mobile (canvas = full viewport width) places it correctly near the right edge.
+            lg+: back to full opacity, constrained to right 58%.
+        */}
+        <div className="absolute right-0 top-0 bottom-0 w-full lg:w-[58%] pointer-events-none opacity-30 lg:opacity-100">
           <canvas ref={canvasRef} className="w-full h-full" />
         </div>
       </div>

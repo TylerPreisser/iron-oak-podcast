@@ -32,7 +32,7 @@ export function FeaturedSeries() {
       id="featured-series"
       className="section-padding bg-[var(--bg-primary)]"
     >
-      <div className="max-w-6xl mx-auto px-8 md:px-12 lg:px-16">
+      <div className="max-w-6xl mx-auto px-4 sm:px-8 md:px-12 lg:px-16">
         {/* Header */}
         <div
           className="text-center mb-14 transition-all duration-1000"
@@ -66,11 +66,13 @@ export function FeaturedSeries() {
                 <button
                   key={p.slug}
                   onClick={() => setActivePhase(i)}
-                  className="flex flex-col items-center group"
+                  // min-w/min-h ensure 44px tap target on mobile (Apple HIG)
+                  className="flex flex-col items-center group min-w-[44px] min-h-[44px] pt-0.5"
                 >
                   <div
                     className={cn(
-                      'w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold',
+                      // w-11 h-11 = 44px — meets minimum touch target size
+                      'w-11 h-11 rounded-full flex items-center justify-center text-sm font-bold',
                       'font-[family-name:var(--font-accent)] transition-all duration-300',
                       'border-2 z-10 relative',
                       i <= activePhase
@@ -96,12 +98,12 @@ export function FeaturedSeries() {
 
           {/* Arrow navigation + detail card */}
           <div className="flex items-stretch gap-4">
-            {/* Left arrow */}
+            {/* Left arrow — w-10 on mobile saves space, w-12 on sm+ */}
             <button
               onClick={prev}
               disabled={activePhase === 0}
               className={cn(
-                'flex-shrink-0 w-12 flex items-center justify-center rounded-[var(--radius-lg)] border transition-all duration-300',
+                'flex-shrink-0 w-10 sm:w-12 min-h-[44px] flex items-center justify-center rounded-[var(--radius-lg)] border transition-all duration-300',
                 activePhase === 0
                   ? 'border-[var(--border-default)] text-[var(--text-tertiary)] opacity-30 cursor-not-allowed'
                   : 'border-[var(--border-default)] text-[var(--text-secondary)] hover:border-[var(--accent-oak)] hover:text-[var(--accent-oak)]'
@@ -113,8 +115,8 @@ export function FeaturedSeries() {
             </button>
 
             {/* Detail card */}
-            <div className="flex-1 rounded-[var(--radius-xl)] border border-[var(--border-default)] bg-[var(--bg-secondary)] overflow-hidden">
-              <div className="p-8 md:p-10 lg:p-12">
+            <div className="flex-1 rounded-[var(--radius-xl)] border border-[var(--border-default)] bg-[var(--bg-secondary)] overflow-hidden min-w-0">
+              <div className="p-5 sm:p-8 md:p-10 lg:p-12">
                 <div className="flex flex-col md:flex-row md:items-start gap-6 md:gap-10">
                   {/* Phase number */}
                   <span className="font-[family-name:var(--font-accent)] text-6xl md:text-7xl font-bold text-[var(--accent-oak)]/20 leading-none flex-shrink-0">
@@ -163,7 +165,7 @@ export function FeaturedSeries() {
               onClick={next}
               disabled={activePhase === series.phases.length - 1}
               className={cn(
-                'flex-shrink-0 w-12 flex items-center justify-center rounded-[var(--radius-lg)] border transition-all duration-300',
+                'flex-shrink-0 w-10 sm:w-12 min-h-[44px] flex items-center justify-center rounded-[var(--radius-lg)] border transition-all duration-300',
                 activePhase === series.phases.length - 1
                   ? 'border-[var(--border-default)] text-[var(--text-tertiary)] opacity-30 cursor-not-allowed'
                   : 'border-[var(--border-default)] text-[var(--text-secondary)] hover:border-[var(--accent-oak)] hover:text-[var(--accent-oak)]'

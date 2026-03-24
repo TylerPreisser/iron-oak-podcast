@@ -29,44 +29,47 @@ export function HeroSection() {
     >
       <GradientBackground className="z-0" />
 
-      <div className="relative z-10 w-full px-10 md:px-16 lg:px-24 xl:px-32">
-        {/* Two-column: text left, logo right */}
-        <div className="flex flex-col-reverse lg:flex-row items-center gap-10 lg:gap-16">
+      {/* px: 1rem on tiny phones, scaling up to 8rem on xl desktop */}
+      <div className="relative z-10 w-full px-4 sm:px-8 md:px-16 lg:px-24 xl:px-32">
+        {/* Two-column: text left, logo right — stacks on mobile */}
+        <div className="flex flex-col-reverse lg:flex-row items-center gap-8 lg:gap-16">
           {/* Text — left side */}
-          <div className="hero-text text-center lg:text-left flex-1">
-            <h1 className="font-[family-name:var(--font-display)] text-[var(--text-hero)] leading-[1.1] text-[var(--text-primary)] mb-5">
+          <div className="hero-text text-center lg:text-left flex-1 w-full">
+            <h1 className="font-[family-name:var(--font-display)] text-[var(--text-hero)] leading-[1.1] text-[var(--text-primary)] mb-4 md:mb-5">
               Where Iron Sharpens Iron and Deep Roots Hold
             </h1>
 
-            <p className="text-[var(--text-secondary)] max-w-xl mb-8 text-lg md:text-xl">
+            <p className="text-[var(--text-secondary)] max-w-xl mb-6 md:mb-8 text-base md:text-xl mx-auto lg:mx-0">
               Hard questions. Honest faith. No easy answers.
             </p>
 
+            {/* Email form: stacks vertically on mobile, side-by-side on sm+ */}
             <div className="hero-email max-w-md mt-2 mx-auto lg:mx-0">
-          <form className="flex gap-2" onSubmit={(e) => e.preventDefault()}>
-            <input
-              type="email"
-              placeholder="Enter your email for updates"
-              className="flex-1 h-12 px-5 rounded-full bg-[var(--bg-secondary)] border border-[var(--border-default)] text-[var(--text-primary)] placeholder:text-[var(--text-tertiary)] focus:outline-none focus:border-[var(--accent-oak)] transition-colors duration-300 text-sm"
-            />
-            <button
-              type="submit"
-              className="h-12 px-6 rounded-full bg-[var(--accent-oak)] text-white font-medium text-sm hover:bg-[var(--accent-oak-light)] transition-colors duration-300 active:scale-[0.97]"
-            >
-              Join
-            </button>
-          </form>
+              <form className="flex flex-col sm:flex-row gap-2" onSubmit={(e) => e.preventDefault()}>
+                <input
+                  type="email"
+                  placeholder="Enter your email for updates"
+                  className="flex-1 h-12 px-5 rounded-full bg-[var(--bg-secondary)] border border-[var(--border-default)] text-[var(--text-primary)] placeholder:text-[var(--text-tertiary)] focus:outline-none focus:border-[var(--accent-oak)] transition-colors duration-300 text-sm"
+                />
+                {/* min-h-12 ensures 48px tap target on mobile */}
+                <button
+                  type="submit"
+                  className="h-12 min-h-[48px] px-6 rounded-full bg-[var(--accent-oak)] text-white font-medium text-sm hover:bg-[var(--accent-oak-light)] transition-colors duration-300 active:scale-[0.97]"
+                >
+                  Join
+                </button>
+              </form>
             </div>
           </div>
 
-          {/* Logo — right side */}
+          {/* Logo — right side; smaller on mobile to not crowd text */}
           <div className="hero-logo flex-shrink-0">
             <Image
               src="/images/iron-oak-logo.png"
               alt="The Iron & Oak Podcast"
               width={400}
               height={400}
-              className="w-[220px] md:w-[300px] lg:w-[360px] h-auto"
+              className="w-[160px] sm:w-[220px] md:w-[300px] lg:w-[360px] h-auto"
               priority
             />
           </div>

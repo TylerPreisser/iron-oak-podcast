@@ -50,11 +50,11 @@ export function MobileMenu({ isOpen, onClose, onScrollTo }: MobileMenuProps) {
     <div
       ref={menuRef}
       className={cn(
-        'fixed inset-0 z-40 lg:hidden transition-all duration-500',
+        // top-16 = 64px = nav height on mobile (matches h-16 in Navigation)
+        'fixed inset-0 top-16 z-40 lg:hidden transition-all duration-500',
         'bg-[var(--bg-primary)] flex flex-col items-center justify-center',
         isOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'
       )}
-      style={{ top: '64px' }}
     >
       <div className="flex flex-col items-center gap-8">
         {navSections.map((item) => (
