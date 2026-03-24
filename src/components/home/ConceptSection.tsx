@@ -9,7 +9,6 @@ const lines = [
   'Iron & Oak is a space where faith gets pressure-tested and Christ remains the answer.',
 ];
 
-// Same ember system as ForgeIntro
 interface Ember {
   x: number;
   y: number;
@@ -24,15 +23,10 @@ interface Ember {
 
 function emberColor(life: number, maxLife: number): string {
   const t = life / maxLife;
-  if (t > 0.7) {
-    return `rgba(255, ${200 + t * 55}, ${140 + t * 60}, ${0.7 + t * 0.3})`;
-  } else if (t > 0.4) {
-    return `rgba(255, ${120 + t * 120}, ${20 + t * 40}, ${t * 0.9})`;
-  } else if (t > 0.15) {
-    return `rgba(${180 + t * 200}, ${50 + t * 150}, 10, ${t * 0.8})`;
-  } else {
-    return `rgba(${80 + t * 600}, ${15 + t * 200}, 5, ${t * 4})`;
-  }
+  if (t > 0.7) return `rgba(255, ${200 + t * 55}, ${140 + t * 60}, ${0.7 + t * 0.3})`;
+  if (t > 0.4) return `rgba(255, ${120 + t * 120}, ${20 + t * 40}, ${t * 0.9})`;
+  if (t > 0.15) return `rgba(${180 + t * 200}, ${50 + t * 150}, 10, ${t * 0.8})`;
+  return `rgba(${80 + t * 600}, ${15 + t * 200}, 5, ${t * 4})`;
 }
 
 export function ConceptSection() {
@@ -41,8 +35,9 @@ export function ConceptSection() {
   const embersRef = useRef<Ember[]>([]);
   const rafRef = useRef(0);
   const [scrollProgress, setScrollProgress] = useState(0);
+  const [isActive, setIsActive] = useState(false);
 
-  // Ember background — copied from ForgeIntro
+  // Ember canvas
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
@@ -58,16 +53,11 @@ export function ConceptSection() {
 
     const spawnEmber = (scattered?: boolean): Ember => {
       const x = Math.random() * canvas.width;
-      const y = scattered
-        ? Math.random() * canvas.height
-        : canvas.height + Math.random() * 60;
-
+      const y = scattered ? Math.random() * canvas.height : canvas.height + Math.random() * 60;
       const angle = -Math.PI / 2 + (Math.random() - 0.5) * 1.4;
       const speed = 0.8 + Math.random() * 2.5;
-
       return {
-        x,
-        y,
+        x, y,
         vx: Math.cos(angle) * speed,
         vy: Math.sin(angle) * speed,
         size: 0.8 + Math.random() * 2,
@@ -79,7 +69,6 @@ export function ConceptSection() {
     };
 
     embersRef.current = Array.from({ length: 60 }, () => spawnEmber(true));
-
     let time = 0;
 
     const draw = () => {
@@ -89,7 +78,6 @@ export function ConceptSection() {
       embersRef.current.forEach((ember, i) => {
         const turbX = Math.sin(ember.turbulencePhase + time * ember.turbulenceSpeed) * 0.4;
         const turbY = Math.cos(ember.turbulencePhase * 1.5 + time * ember.turbulenceSpeed * 0.6) * 0.2;
-
         ember.x += ember.vx + turbX;
         ember.y += ember.vy + turbY;
         ember.vx *= 0.999;
@@ -107,7 +95,6 @@ export function ConceptSection() {
         ctx.save();
         ctx.translate(ember.x, ember.y);
 
-        // Soft glow
         const glowSize = ember.size * 5;
         const glow = ctx.createRadialGradient(0, 0, 0, 0, 0, glowSize);
         glow.addColorStop(0, `rgba(255, ${100 + t * 100}, 20, ${t * 0.12})`);
@@ -117,13 +104,11 @@ export function ConceptSection() {
         ctx.fillStyle = glow;
         ctx.fill();
 
-        // Core dot
         ctx.beginPath();
         ctx.arc(0, 0, ember.size, 0, Math.PI * 2);
         ctx.fillStyle = color;
         ctx.fill();
 
-        // Bright center on fresh embers
         if (t > 0.5) {
           ctx.beginPath();
           ctx.arc(0, 0, ember.size * 0.35, 0, Math.PI * 2);
@@ -144,15 +129,22 @@ export function ConceptSection() {
     };
   }, []);
 
-  // Track scroll progress
+  // Track scroll — determine if section is in view and progress through it
   useEffect(() => {
     const handleScroll = () => {
       const section = sectionRef.current;
       if (!section) return;
       const rect = section.getBoundingClientRect();
       const vh = window.innerHeight;
-      const progress = Math.max(0, Math.min(1, -rect.top / (rect.height - vh)));
-      setScrollProgress(progress);
+
+      // Is the section currently spanning the viewport?
+      const active = rect.top <= 0 && rect.bottom >= vh;
+      setIsActive(active);
+
+      if (active) {
+        const progress = Math.max(0, Math.min(1, -rect.top / (rect.height - vh)));
+        setScrollProgress(progress);
+      }
     };
     window.addEventListener('scroll', handleScroll, { passive: true });
     handleScroll();
@@ -164,58 +156,57 @@ export function ConceptSection() {
       ref={sectionRef}
       id="concept"
       className="relative bg-[var(--bg-primary)]"
-      // Mobile: 100vh per line feels excessive — use 80vh per line on small screens
-      // Desktop: 120vh per line gives comfortable pacing. CSS calc allows responsive height.
       style={{ height: `${lines.length * 120 + 60}vh` }}
     >
-      <div className="sticky top-0 h-screen overflow-hidden">
+      {/* Fixed overlay - always rendered, visibility toggled */}
+      <div
+        className="fixed inset-0 z-30 pointer-events-none"
+        style={{ opacity: isActive ? 1 : 0, visibility: isActive ? 'visible' : 'hidden' }}
+      >
+        <div className="absolute inset-0 bg-[var(--bg-primary)]" />
         <canvas ref={canvasRef} className="absolute inset-0 z-0" />
 
-        <div className="absolute inset-0 z-10">
-          {lines.map((line, i) => {
-            // Each line gets its own slice of scroll progress
-            const lineStart = i / lines.length;
-            const peakStart = (i + 0.25) / lines.length; // fully opaque by here
-            const peakEnd = (i + 0.65) / lines.length;   // stays fully opaque until here
-            const lineEnd = (i + 0.9) / lines.length;
+          <div className="absolute inset-0 z-10">
+            {lines.map((line, i) => {
+              const lineStart = i / lines.length;
+              const peakStart = (i + 0.25) / lines.length;
+              const peakEnd = (i + 0.65) / lines.length;
+              const lineEnd = (i + 0.9) / lines.length;
 
-            // Opacity: fade in → HOLD at 1.0 → fade out
-            let opacity = 0;
-            if (scrollProgress >= lineStart && scrollProgress <= lineEnd) {
-              if (scrollProgress < peakStart) {
-                opacity = (scrollProgress - lineStart) / (peakStart - lineStart);
-              } else if (scrollProgress <= peakEnd) {
-                opacity = 1; // fully opaque in the center
-              } else {
-                opacity = 1 - (scrollProgress - peakEnd) / (lineEnd - peakEnd);
+              let opacity = 0;
+              if (scrollProgress >= lineStart && scrollProgress <= lineEnd) {
+                if (scrollProgress < peakStart) {
+                  opacity = (scrollProgress - lineStart) / (peakStart - lineStart);
+                } else if (scrollProgress <= peakEnd) {
+                  opacity = 1;
+                } else {
+                  opacity = 1 - (scrollProgress - peakEnd) / (lineEnd - peakEnd);
+                }
               }
-            }
-            opacity = Math.max(0, Math.min(1, opacity));
+              opacity = Math.max(0, Math.min(1, opacity));
 
-            // Y position: each line enters from below center, sits at center, exits above
-            const lineMid = (lineStart + lineEnd) / 2;
-            const yOffset = (scrollProgress - lineMid) * -120; // negative = moves up
+              const lineMid = (lineStart + lineEnd) / 2;
+              const yOffset = (scrollProgress - lineMid) * -120;
 
-            return (
-              <p
-                key={i}
-                // px-5 on mobile for breathing room; text-[var(--text-h2)] already clamps
-                className="absolute left-0 right-0 px-5 sm:px-8 font-[family-name:var(--font-display)] text-[var(--text-h2)] leading-relaxed text-[var(--text-primary)] text-center max-w-3xl mx-auto"
-                style={{
-                  top: '50%',
-                  transform: `translateY(calc(-50% + ${yOffset}vh))`,
-                  opacity,
-                }}
-              >
-                {line}
-              </p>
-            );
-          })}
+              return (
+                <p
+                  key={i}
+                  className="absolute left-0 right-0 px-5 sm:px-8 font-[family-name:var(--font-display)] text-[var(--text-h2)] leading-relaxed text-[var(--text-primary)] text-center max-w-3xl mx-auto"
+                  style={{
+                    top: '50%',
+                    transform: `translateY(calc(-50% + ${yOffset}vh))`,
+                    opacity,
+                  }}
+                >
+                  {line}
+                </p>
+              );
+            })}
+          </div>
+
+          <div className="absolute top-0 left-0 right-0 h-32 bg-gradient-to-b from-[var(--bg-primary)] to-transparent z-20" />
+          <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-[var(--bg-primary)] to-transparent z-20" />
         </div>
-
-        <div className="absolute top-0 left-0 right-0 h-32 bg-gradient-to-b from-[var(--bg-primary)] to-transparent z-20 pointer-events-none" />
-        <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-[var(--bg-primary)] to-transparent z-20 pointer-events-none" />
-      </div>
     </section>
   );
 }

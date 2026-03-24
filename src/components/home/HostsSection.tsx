@@ -7,7 +7,8 @@ import { cn } from '@/lib/utils';
 
 const hostImages: Record<string, string> = {
   'Tyler Preisser': '/images/tyler-headshot.webp',
-  'Lincoln Myers': '/images/lincoln-headshot.webp',
+  // Drop Lincoln's headshot at /public/images/lincoln-headshot.webp to activate
+  // 'Lincoln Myers': '/images/lincoln-headshot.webp',
 };
 
 function FadeIn({ children, className, delay = 0 }: { children: React.ReactNode; className?: string; delay?: number }) {
@@ -68,13 +69,22 @@ export function HostsSection() {
                         : 'border-[var(--accent-oak)]/40'
                     )}
                   >
-                    <Image
-                      src={hostImages[host.name]}
-                      alt={host.name}
-                      width={200}
-                      height={200}
-                      className="w-full h-full object-cover"
-                    />
+                    {hostImages[host.name] ? (
+                      <Image
+                        src={hostImages[host.name]}
+                        alt={host.name}
+                        width={200}
+                        height={200}
+                        className="w-full h-full object-cover"
+                      />
+                    ) : (
+                      <div className={cn(
+                        'w-full h-full flex items-center justify-center text-3xl font-bold font-[family-name:var(--font-display)]',
+                        host.texture === 'iron' ? 'bg-[var(--accent-iron)]/10 text-[var(--accent-iron)]' : 'bg-[var(--accent-oak)]/10 text-[var(--accent-oak)]'
+                      )}>
+                        {host.name.split(' ').map(n => n[0]).join('')}
+                      </div>
+                    )}
                   </div>
                 </div>
 
