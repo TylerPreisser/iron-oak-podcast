@@ -803,21 +803,24 @@ function drawScene(
   // Think: person standing to the right, holding handle end, swinging
   // the head down onto the anvil face in an arc.
   // ============================================================
-  const pivotX = w * 0.92;              // off-screen right (handle end held by blacksmith)
-  const pivotY = anvilTopY - h * 0.28;  // above anvil level (shoulder/hand height)
+  // Pivot = where the blacksmith's hand grips the handle end.
+  // To the RIGHT of the anvil, at anvil face height.
+  // Head is at the far end of the arm (armLen away from pivot).
+  const pivotX = w * 0.88;              // right of anvil (hand position)
+  const pivotY = anvilTopY;             // at anvil face height
 
   // Arm length = exact distance from pivot to impact point
   const dxImpact = impactX - pivotX;
   const dyImpact = impactY - pivotY;
   const armLen   = Math.sqrt(dxImpact * dxImpact + dyImpact * dyImpact);
 
-  // Impact angle: exact direction from pivot to anvil face impact point
+  // Impact angle: direction from pivot to impact point (head lands here)
   const angleImpact = Math.atan2(dyImpact, dxImpact);
-  // Cocked back: hammer head raised UP (counter-clockwise from impact)
-  // With pivot to the right, this lifts the head up and to the right
-  const angleCocked = angleImpact - 0.55;
-  // Bounce/lift after strike: slightly raised from impact position
-  const angleLift   = angleImpact - 0.28;
+  // Cocked: head raised UP above anvil. In canvas coords with pivot to the
+  // right, ADDING to the angle rotates the head UPWARD (negative Y).
+  const angleCocked = angleImpact + 0.55;
+  // Bounce/lift after strike: head bounces slightly up from impact
+  const angleLift   = angleImpact + 0.28;
 
   // 0.35–0.45: FIRST STRIKE — hammer arcs down to anvil
   const strike1 = progress < 0.35 ? 0 : Math.min(1, (progress - 0.35) / 0.10);
@@ -831,8 +834,8 @@ function drawScene(
   // Compute current hammer swing angle
   let hammerAngle: number;
   if (hammerAppear < 1) {
-    // Swinging into view from above — starts very raised, settles to cocked rest
-    const entryCocked = angleCocked - 0.40;
+    // Swinging into view — starts even higher than cocked, settles to cocked rest
+    const entryCocked = angleCocked + 0.35;
     const ease = 1 - Math.pow(1 - hammerAppear, 2);
     hammerAngle = entryCocked + (angleCocked - entryCocked) * ease;
   } else if (strike1 < 1) {
@@ -845,13 +848,13 @@ function drawScene(
     hammerAngle = angleImpact + (angleLift - angleImpact) * ease;
   } else if (strike2 < 1) {
     // Second strike: starts from lift position, swings harder/deeper
-    const angleImpact2 = angleImpact + 0.04; // slightly deeper impact
+    const angleImpact2 = angleImpact - 0.03; // slightly past impact (deeper strike)
     const ease = 1 - Math.pow(1 - strike2, 3);
     hammerAngle = angleLift + (angleImpact2 - angleLift) * ease;
   } else {
     // Lift after second strike + fade
     const ease = Math.pow(lift2, 0.7);
-    hammerAngle = (angleImpact + 0.04) + (angleLift + 0.06 - (angleImpact + 0.04)) * ease;
+    hammerAngle = (angleImpact - 0.03) + (angleLift + 0.05 - (angleImpact - 0.03)) * ease;
   }
 
   // ============================================================
