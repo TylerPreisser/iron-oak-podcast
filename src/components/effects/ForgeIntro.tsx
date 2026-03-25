@@ -40,13 +40,30 @@ export function ForgeIntro() {
   const rafRef = useRef<number>(0);
   const embersRef = useRef<Ember[]>([]);
 
-  const dismiss = useCallback(() => {
-    setFadingOut(true);
-    setTimeout(() => setVisible(false), 500);
+  const revealPage = useCallback(() => {
+    // Mark intro as played for this session so the inline script
+    // won't add forge-pending on the next navigation/reload.
+    try { sessionStorage.setItem('forge-intro-played', '1'); } catch (_) {}
+    // Swap classes: remove the hidden state, add the transition.
+    document.body.classList.remove('forge-pending');
+    document.body.classList.add('forge-revealing');
+    // Clean up the revealing class after the transition finishes
+    // so it doesn't interfere with anything else.
+    setTimeout(() => document.body.classList.remove('forge-revealing'), 700);
   }, []);
 
+  const dismiss = useCallback(() => {
+    setFadingOut(true);
+    revealPage();
+    setTimeout(() => setVisible(false), 500);
+  }, [revealPage]);
+
   useEffect(() => {
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      // Intro won't play — immediately reveal the page content.
+      revealPage();
+      return;
+    }
     setVisible(true);
     const textTimer = setTimeout(() => setTextVisible(true), 1000);
     const dismissTimer = setTimeout(() => dismiss(), 3500);
@@ -54,7 +71,7 @@ export function ForgeIntro() {
       clearTimeout(textTimer);
       clearTimeout(dismissTimer);
     };
-  }, [dismiss]);
+  }, [dismiss, revealPage]);
 
   useEffect(() => {
     if (!visible) return;
