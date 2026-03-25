@@ -306,11 +306,19 @@ function drawSparks(
 }
 
 // ============================================================
-// MAIN SCENE — position-based keyframe animation driven by scroll 0–1
+// MAIN SCENE — position-based keyframe animation driven by a
+// time-based progress value (0→1, looping). Scroll ONLY
+// controls visibility (fade in/out of the canvas wrapper).
 //
-// Timing defaults (match hammer-tuner defaults):
-//   Strike 1: start=0.30, hit=0.42
-//   Strike 2: start=0.52, hit=0.65
+// Timing map (progress 0→1 over ~3 seconds):
+//   0.00–0.15: Anvil visible, hammer appears from upper-right into RAISED
+//   0.15–0.35: Strike 1: RAISED → IMPACT (ease-in)
+//   0.35–0.40: Impact 1 glow + sparks
+//   0.40–0.55: Bounce back: IMPACT → BOUNCE → RAISED
+//   0.55–0.75: Strike 2: RAISED → IMPACT (ease-in, harder)
+//   0.75–0.80: Impact 2 glow + sparks
+//   0.80–0.95: Lift: IMPACT → BOUNCE → RAISED
+//   0.95–1.00: Brief pause at RAISED before loop
 // ============================================================
 function drawScene(
   ctx: CanvasRenderingContext2D,
@@ -320,60 +328,38 @@ function drawScene(
   sparks: Spark[],
 ) {
   ctx.clearRect(0, 0, w, h);
-  if (progress <= 0.01) return;
 
   // ── Layout anchors ─────────────────────────────────────────────
-  // Anvil sits in the right ~55% of the canvas (canvas itself is already the right 58%).
-  // anvilCX  = horizontal center of the anvil throat/body
-  // anvilTopY = y of the TOP of the anvil working face
   const anvilCX    = w * 0.62;
   const anvilTopY  = h * 0.50;
   const anvilScale = 0.88;
 
   // Impact point: where the hammer face contacts the anvil
-  // Slightly left of body center (working area between horn and hardy hole)
   const impactX = anvilCX - 20;
   const impactY = anvilTopY - 2;
 
-  // ── Timing constants ───────────────────────────────────────────
-  const APPEAR_START = 0.15;
-  const S1_START     = 0.30;
-  const S1_HIT       = 0.42;
-  const S2_START     = 0.52;
-  const S2_HIT       = 0.65;
-  const L1_DUR       = 0.10;
-  const L2_DUR       = 0.15;
-
-  // ── Anvil alpha (fade in/out at section boundaries) ────────────
-  const anvilAlpha = progress < 0.15
-    ? Math.min(1, progress / 0.15)
-    : progress > 0.85
-      ? Math.max(0, 1 - (progress - 0.85) / 0.15)
-      : 1;
+  // ── Timing constants (time-based, not scroll-based) ───────────
+  const APPEAR_START = 0.00;
+  const S1_START     = 0.15;
+  const S1_HIT       = 0.35;
+  const S2_START     = 0.55;
+  const S2_HIT       = 0.75;
+  const L1_DUR       = 0.05;  // glow window after strike 1
+  const L2_DUR       = 0.05;  // glow window after strike 2
 
   // ── Key poses ──────────────────────────────────────────────────
-  // RAISED: hammer is held high to the right, ready to strike down-left.
-  //   rot=315°: handle points upper-right, impact face (-X end) faces lower-left toward anvil.
   const RAISED: HammerPose = {
     hx:  impactX + 110,
     hy:  impactY - 195,
     rot: 315,
   };
 
-  // IMPACT: hammer face (at -X end of head in local space) is on the anvil face.
-  //   rot=270°: impact face points straight down (-X local → world -Y reversed = +Y... )
-  //   At rot=270: local +X maps to world (cos270°, sin270°) = (0, -1) = UP.
-  //               local -X maps to world DOWN (+Y). So impact face points DOWN. ✓
-  //   Head center offset: the impact face is at x=-headW/2=-29 in local. After rotation 270°
-  //   that becomes y=+29 below center. So center must be 29px ABOVE impactY: hy = impactY - 29.
   const IMPACT: HammerPose = {
     hx:  impactX,
     hy:  impactY - 29,
     rot: 270,
   };
 
-  // BOUNCE: hammer lifts slightly after impact.
-  //   Head rises a bit, rotation tilts back slightly past vertical.
   const BOUNCE: HammerPose = {
     hx:  impactX + 18,
     hy:  impactY - 65,
@@ -381,28 +367,24 @@ function drawScene(
   };
 
   // ── Compute current pose ───────────────────────────────────────
-  let pose: HammerPose | null = null;
-  let hammerAlpha = 0;
+  // Anvil and hammer are always fully visible while this function runs.
+  // The canvas container opacity (controlled by ScrollTrigger) handles
+  // section-level fade in/out.
+  let pose: HammerPose;
 
-  if (progress < APPEAR_START) {
-    // Not yet visible
-    hammerAlpha = 0;
-  } else if (progress < S1_START) {
-    // Fade in: drift from slightly off-screen to RAISED position
-    const t     = (progress - APPEAR_START) / Math.max(0.001, S1_START - APPEAR_START);
-    const eased = easeOut3(t);
+  if (progress < S1_START) {
+    // Appear: drift from slightly off-screen to RAISED position
+    const t = (progress - APPEAR_START) / Math.max(0.001, S1_START - APPEAR_START);
     const OFFSCREEN: HammerPose = {
       hx:  RAISED.hx + 80,
       hy:  RAISED.hy - 60,
       rot: RAISED.rot - 25,
     };
-    pose = lerpPose(OFFSCREEN, RAISED, eased);
-    hammerAlpha = Math.min(1, t * 3);
+    pose = lerpPose(OFFSCREEN, RAISED, easeOut3(t));
   } else if (progress < S1_HIT) {
-    // Strike 1: RAISED → IMPACT with ease-in (accelerating swing)
+    // Strike 1: RAISED → IMPACT (ease-in, accelerating)
     const t = (progress - S1_START) / Math.max(0.001, S1_HIT - S1_START);
     pose = lerpPose(RAISED, IMPACT, easeIn3(t));
-    hammerAlpha = 1;
   } else if (progress < S2_START) {
     // Between strikes: IMPACT → BOUNCE → RAISED
     const segDur = S2_START - S1_HIT;
@@ -412,26 +394,22 @@ function drawScene(
     } else {
       pose = lerpPose(BOUNCE, RAISED, easeOut3((t - 0.35) / 0.65));
     }
-    hammerAlpha = 1;
   } else if (progress < S2_HIT) {
-    // Strike 2: RAISED → IMPACT with ease-in
+    // Strike 2: RAISED → IMPACT (ease-in, slightly harder)
     const t = (progress - S2_START) / Math.max(0.001, S2_HIT - S2_START);
     pose = lerpPose(RAISED, IMPACT, easeIn3(t));
-    hammerAlpha = 1;
-  } else if (progress < 0.85) {
+  } else if (progress < 0.95) {
     // After strike 2: IMPACT → BOUNCE → RAISED
-    const segDur = 0.85 - S2_HIT;
+    const segDur = 0.95 - S2_HIT;
     const t      = (progress - S2_HIT) / Math.max(0.001, segDur);
     if (t < 0.25) {
       pose = lerpPose(IMPACT, BOUNCE, easeOut3(t / 0.25));
     } else {
       pose = lerpPose(BOUNCE, RAISED, easeOut3((t - 0.25) / 0.75));
     }
-    hammerAlpha = 1;
   } else {
-    // Fade out at raised position
+    // Brief pause at RAISED before loop restarts (0.95–1.00)
     pose = RAISED;
-    hammerAlpha = Math.max(0, 1 - (progress - 0.85) / 0.15);
   }
 
   // ── Strike glow intensity ──────────────────────────────────────
@@ -449,25 +427,25 @@ function drawScene(
   glowIntensity = Math.min(1, glowIntensity);
 
   // ── Ambient screen glow during strikes ────────────────────────
-  if (glowIntensity > 0 && anvilAlpha > 0) {
+  if (glowIntensity > 0) {
     const ambR    = w * 0.40 * glowIntensity;
     const ambient = ctx.createRadialGradient(impactX, impactY, 0, impactX, impactY, ambR);
-    ambient.addColorStop(0,   `rgba(255, 120, 20, ${0.14 * glowIntensity * anvilAlpha})`);
-    ambient.addColorStop(0.5, `rgba(200,  60,  5, ${0.07 * glowIntensity * anvilAlpha})`);
+    ambient.addColorStop(0,   `rgba(255, 120, 20, ${0.14 * glowIntensity})`);
+    ambient.addColorStop(0.5, `rgba(200,  60,  5, ${0.07 * glowIntensity})`);
     ambient.addColorStop(1,   'rgba(0,0,0,0)');
     ctx.fillStyle = ambient;
     ctx.fillRect(0, 0, w, h);
   }
 
   // ── Draw: anvil ────────────────────────────────────────────────
-  drawAnvil(ctx, anvilCX, anvilTopY, anvilScale, anvilAlpha);
+  drawAnvil(ctx, anvilCX, anvilTopY, anvilScale, 1);
 
   // ── Draw: strike glow on anvil face ───────────────────────────
-  drawStrikeGlow(ctx, impactX, impactY + 4, glowIntensity * anvilAlpha);
+  drawStrikeGlow(ctx, impactX, impactY + 4, glowIntensity);
 
   // ── Spawn sparks at strike moments ────────────────────────────
-  const isStriking1 = progress > S1_HIT && progress < S1_HIT + L1_DUR * 0.45;
-  const isStriking2 = progress > S2_HIT && progress < S2_HIT + L2_DUR * 0.50;
+  const isStriking1 = progress > S1_HIT && progress < S1_HIT + L1_DUR * 0.8;
+  const isStriking2 = progress > S2_HIT && progress < S2_HIT + L2_DUR * 0.8;
 
   if ((isStriking1 || isStriking2) && time % 2 === 0) {
     const burstCount = isStriking2 ? 9 : 6;
@@ -502,10 +480,7 @@ function drawScene(
   drawSparks(ctx, sparks);
 
   // ── Draw: hammer (topmost layer) ──────────────────────────────
-  if (pose && hammerAlpha > 0) {
-    const finalAlpha = hammerAlpha * (anvilAlpha > 0 ? 1 : 0);
-    drawHammer(ctx, pose, finalAlpha);
-  }
+  drawHammer(ctx, pose, 1);
 }
 
 // ============================================================
@@ -557,38 +532,49 @@ export function IronAnvilSection() {
   useGSAP((gsap, ScrollTrigger) => {
     if (!sectionRef.current || !textRef.current) return;
 
-    const textElements = textRef.current.querySelectorAll('.why-text-item');
-    const proxy = { progress: 0 };
+    // ── Time-based hammer animation (completely independent of scroll) ──
+    // Tweens progress 0→1 over 3 seconds on a repeating loop.
+    // The canvas render loop reads stateRef.current.progress each frame.
+    const anim = { progress: 0 };
+    const animTl = gsap.timeline({ repeat: -1, repeatDelay: 0.3, paused: true });
+    animTl.to(anim, {
+      progress: 1,
+      duration: 3,
+      ease:     'none',
+      onUpdate: () => { stateRef.current.progress = anim.progress; },
+    });
 
-    const tl = gsap.timeline({
+    // ── ScrollTrigger: pins section, only controls visibility ──────────
+    // Does NOT scrub or drive animation progress.
+    ScrollTrigger.create({
+      trigger:    sectionRef.current,
+      start:      'top top',
+      end:        '+=180%',
+      pin:        true,
+      onEnter:     () => { animTl.play(); },
+      onLeave:     () => { animTl.pause(); },
+      onEnterBack: () => { animTl.play(); },
+      onLeaveBack: () => { animTl.pause(); },
+    });
+
+    // ── Text animation: scroll-triggered fade-in (separate ScrollTrigger) ─
+    const textElements = textRef.current.querySelectorAll('.why-text-item');
+    const textTl = gsap.timeline({
       scrollTrigger: {
         trigger: sectionRef.current,
-        start:   'top top',
-        end:     '+=180%',
-        pin:     true,
-        scrub:   0.8,
+        start:   'top 80%',
+        end:     'top 20%',
+        toggleActions: 'play none none reverse',
       },
     });
 
-    tl.to(proxy, {
-      progress: 1,
-      duration: 0.9,
-      ease:     'none',
-      onUpdate: () => { stateRef.current.progress = proxy.progress; },
-    }, 0);
-
     textElements.forEach((el, i) => {
-      tl.fromTo(el,
+      textTl.fromTo(el,
         { opacity: 0, x: -25 },
-        { opacity: 1, x: 0, duration: 0.10, ease: 'power3.out' },
-        0.28 + i * 0.06,
+        { opacity: 1, x: 0, duration: 0.5, ease: 'power3.out' },
+        i * 0.12,
       );
     });
-
-    tl.to(textRef.current,
-      { opacity: 0, x: -20, duration: 0.10, ease: 'power2.in' },
-      0.70,
-    );
   }, []);
 
   return (

@@ -46,18 +46,27 @@ export const metadata: Metadata = {
   authors: [{ name: 'Tyler Preisser' }, { name: 'Lincoln Myers' }],
   creator: 'Iron & Oak Podcast',
   metadataBase: new URL('https://theironandoakpodcast.com'),
+  icons: {
+    icon: [
+      { url: '/favicon-32x32.png', sizes: '32x32', type: 'image/png' },
+      { url: '/favicon-16x16.png', sizes: '16x16', type: 'image/png' },
+    ],
+    apple: [
+      { url: '/apple-touch-icon.png', sizes: '180x180', type: 'image/png' },
+    ],
+  },
   openGraph: {
     type: 'website',
     locale: 'en_US',
     siteName: 'The Iron & Oak Podcast',
     title: 'The Iron & Oak Podcast | Faith Forged in Honesty',
-    description: 'Hard questions. Honest faith. No easy answers. Tyler Preisser and Lincoln Myers dig into Scripture, doubt, and the questions most people are afraid to ask.',
+    description: 'Two men from the Kansas plains digging into Scripture, doubt, and the questions that matter most.',
     images: [{ url: '/images/iron-oak-logo-new.webp', width: 1200, height: 1200, alt: 'The Iron & Oak Podcast' }],
   },
   twitter: {
     card: 'summary_large_image',
     title: 'The Iron & Oak Podcast',
-    description: 'Hard questions. Honest faith. No easy answers. Where iron sharpens iron and deep roots hold.',
+    description: 'Two men from the Kansas plains digging into Scripture, doubt, and the questions that matter most.',
     images: ['/images/iron-oak-logo-new.webp'],
   },
   robots: {
