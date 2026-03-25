@@ -46,7 +46,6 @@ export function ForgeIntro() {
   const dismiss = useCallback(() => {
     if (fadingOut) return; // prevent double-dismiss
     setFadingOut(true);
-    try { sessionStorage.setItem('forge-intro-played', '1'); } catch (_) {}
     setTimeout(() => setDismissed(true), 600);
   }, [fadingOut]);
 
@@ -57,15 +56,7 @@ export function ForgeIntro() {
       setDismissed(true);
       return;
     }
-    // If already played this session, skip entirely
-    try {
-      if (sessionStorage.getItem('forge-intro-played')) {
-        setDismissed(true);
-        return;
-      }
-    } catch (_) {}
-
-    // Start animation
+    // Always play the intro on every fresh page load
     setAnimating(true);
     const logoTimer = setTimeout(() => setLogoVisible(true), 300);
     return () => clearTimeout(logoTimer);
