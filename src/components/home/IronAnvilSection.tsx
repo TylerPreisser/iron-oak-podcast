@@ -464,8 +464,8 @@ function drawHammer(
   // angle=0 means the handle hangs straight down; negative angles swing it back (clockwise = forward swing)
   // We only draw the LOWER portion of the arm (from partial-arm-start to head)
 
-  // Visible handle starts 15% of armLen from pivot (most of handle visible since pivot is to the right)
-  const visibleStart = 0.15;  // fraction of armLen where visible portion begins
+  // Visible handle starts 26% of armLen from pivot (tuned value)
+  const visibleStart = 0.26;
 
   // Compute the handle endpoint at full arm length
   const headCX = pivotX + Math.cos(angle) * armLen;
@@ -479,9 +479,9 @@ function drawHammer(
   const perpX = -Math.sin(angle);
   const perpY =  Math.cos(angle);
 
-  const handleW = 13; // handle width in pixels
-  const headW   = 78; // hammer head width (perpendicular to handle axis)
-  const headLen = 54; // hammer head length (along handle axis)
+  const handleW = 15; // handle width in pixels (tuned)
+  const headW   = 82; // hammer head width perpendicular to handle (tuned)
+  const headLen = 58; // hammer head length along handle axis (tuned)
 
   // Handle corners
   const h0x = handleStartX + perpX * handleW / 2;
@@ -806,23 +806,19 @@ function drawScene(
   // Pivot = where the blacksmith's hand grips the handle end.
   // Far RIGHT, slightly above anvil face (like a raised hand).
   // Head FACE (not center) should land on the impact point.
-  const pivotX = w * 0.95;              // far right, mostly off-screen
-  const pivotY = anvilTopY - 40;        // slightly above anvil face
+  // TUNED VALUES from interactive hammer-tuner.html
+  // Pivot: +0.21w right of anvil center, 45px above face
+  const pivotX = w * 0.83;
+  const pivotY = anvilTopY - 45;
 
-  // Arm length = distance from pivot to impact point, MINUS the head's
-  // front offset (33px) so the striking FACE lands on impact, not the center
   const dxImpact = impactX - pivotX;
   const dyImpact = impactY - pivotY;
   const rawDist  = Math.sqrt(dxImpact * dxImpact + dyImpact * dyImpact);
-  const armLen   = rawDist - 33;  // offset so hammer FACE hits the anvil, not head center
+  const armLen   = rawDist - 3;
 
-  // Impact angle: direction from pivot to impact point (head lands here)
   const angleImpact = Math.atan2(dyImpact, dxImpact);
-  // Cocked: head raised UP above anvil. In canvas coords with pivot to the
-  // right, ADDING to the angle rotates the head UPWARD (negative Y).
-  const angleCocked = angleImpact + 0.55;
-  // Bounce/lift after strike: head bounces slightly up from impact
-  const angleLift   = angleImpact + 0.28;
+  const angleCocked = angleImpact + 0.51;
+  const angleLift   = angleImpact + 0.05;
 
   // 0.35–0.45: FIRST STRIKE — hammer arcs down to anvil
   const strike1 = progress < 0.35 ? 0 : Math.min(1, (progress - 0.35) / 0.10);
@@ -836,8 +832,8 @@ function drawScene(
   // Compute current hammer swing angle
   let hammerAngle: number;
   if (hammerAppear < 1) {
-    // Swinging into view — starts even higher than cocked, settles to cocked rest
-    const entryCocked = angleCocked + 0.35;
+    // Swinging into view — starts higher than cocked, settles to cocked rest
+    const entryCocked = angleCocked + 0.35;  // tuned entry offset
     const ease = 1 - Math.pow(1 - hammerAppear, 2);
     hammerAngle = entryCocked + (angleCocked - entryCocked) * ease;
   } else if (strike1 < 1) {
@@ -864,12 +860,12 @@ function drawScene(
   // Peaks sharply at impact, decays during lift
   // ============================================================
   let glowIntensity = 0;
-  // First strike glow — starts at moment of impact
-  if (strike1 >= 0.96 && lift1 < 1) {
+  // First strike glow
+  if (strike1 >= 0.90 && lift1 < 1) {
     glowIntensity = Math.max(0, 1 - lift1 * 2.2);
   }
-  // Second strike glow (brighter — harder blow)
-  if (strike2 >= 0.96 && lift2 < 1) {
+  // Second strike glow (brighter)
+  if (strike2 >= 0.90 && lift2 < 1) {
     const g2 = Math.max(0, 1 - lift2 * 2.0) * 1.25;
     glowIntensity = Math.max(glowIntensity, g2);
   }
@@ -901,9 +897,9 @@ function drawScene(
   // ============================================================
   // SPAWN SPARKS at strike moments
   // ============================================================
-  // Sparks fire at the exact moment of impact (strike near 1.0) and during early lift
-  const isStriking1 = strike1 > 0.96 && lift1 < 0.35;
-  const isStriking2 = strike2 > 0.96 && lift2 < 0.40;
+  // Sparks fire at moment of impact and continue during early lift
+  const isStriking1 = strike1 > 0.90 && lift1 < 0.45;
+  const isStriking2 = strike2 > 0.90 && lift2 < 0.50;
 
   if ((isStriking1 || isStriking2) && time % 2 === 0) {
     const burstCount = isStriking2 ? 9 : 6;
