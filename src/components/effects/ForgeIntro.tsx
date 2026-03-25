@@ -65,11 +65,11 @@ export function ForgeIntro() {
       return;
     }
     setVisible(true);
-    const textTimer = setTimeout(() => setTextVisible(true), 1000);
-    const dismissTimer = setTimeout(() => dismiss(), 3500);
+    // Show logo immediately (small delay just for the fade-in feel)
+    const textTimer = setTimeout(() => setTextVisible(true), 300);
+    // No auto-dismiss — user clicks/taps/scrolls to continue
     return () => {
       clearTimeout(textTimer);
-      clearTimeout(dismissTimer);
     };
   }, [dismiss, revealPage]);
 
@@ -226,7 +226,7 @@ export function ForgeIntro() {
         )}
       >
         <Image
-            src={assetPath("/images/iron-oak-logo.webp")}
+            src={assetPath("/images/iron-oak-logo-new.webp")}
             alt="The Iron & Oak Podcast"
             width={500}
             height={500}
@@ -240,7 +240,7 @@ export function ForgeIntro() {
         className="absolute bottom-8 left-1/2 -translate-x-1/2 text-xs text-white/30 tracking-wider"
         style={{ marginBottom: 'env(safe-area-inset-bottom)' }}
       >
-        Tap to skip
+        Tap anywhere to continue
       </p>
     </div>
   );

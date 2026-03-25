@@ -22,18 +22,18 @@ export function Header() {
       className={cn(
         'fixed top-0 left-0 right-0 z-50 transition-all duration-300',
         scrolled
-          ? 'backdrop-blur-[12px] bg-[var(--bg-primary)]/80 border-b border-[var(--border-default)]'
+          ? 'backdrop-blur-[12px] bg-[var(--bg-primary)]/80 shadow-[0_1px_0_rgba(255,255,255,0.06)]'
           : 'bg-transparent'
       )}
     >
-      <div className="container-default flex items-center justify-between h-16 lg:h-20">
+      <div className="container-default flex items-center justify-between h-18 lg:h-22">
         <button onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}>
           <Image
             src={assetPath("/images/iron-oak-icon.webp")}
             alt="Iron & Oak"
             width={120}
             height={120}
-            className="w-10 h-10 lg:w-12 lg:h-12"
+            className="w-14 h-14 lg:w-16 lg:h-16"
           />
         </button>
 

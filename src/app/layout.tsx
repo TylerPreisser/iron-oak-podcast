@@ -45,20 +45,20 @@ export const metadata: Metadata = {
   keywords: ['podcast', 'faith', 'Christianity', 'Bible', 'Scripture', 'theology', 'Iron and Oak', 'Tyler Preisser', 'Lincoln Myers', 'Hays Kansas', 'Christian podcast'],
   authors: [{ name: 'Tyler Preisser' }, { name: 'Lincoln Myers' }],
   creator: 'Iron & Oak Podcast',
-  metadataBase: new URL('https://tpreisser.github.io'),
+  metadataBase: new URL('https://theironandoakpodcast.com'),
   openGraph: {
     type: 'website',
     locale: 'en_US',
     siteName: 'The Iron & Oak Podcast',
     title: 'The Iron & Oak Podcast | Faith Forged in Honesty',
     description: 'Hard questions. Honest faith. No easy answers. Tyler Preisser and Lincoln Myers dig into Scripture, doubt, and the questions most people are afraid to ask.',
-    images: [{ url: '/iron-oak-podcast/images/iron-oak-logo.webp', width: 1200, height: 1200, alt: 'The Iron & Oak Podcast' }],
+    images: [{ url: '/images/iron-oak-logo-new.webp', width: 1200, height: 1200, alt: 'The Iron & Oak Podcast' }],
   },
   twitter: {
     card: 'summary_large_image',
     title: 'The Iron & Oak Podcast',
     description: 'Hard questions. Honest faith. No easy answers. Where iron sharpens iron and deep roots hold.',
-    images: ['/iron-oak-podcast/images/iron-oak-logo.webp'],
+    images: ['/images/iron-oak-logo-new.webp'],
   },
   robots: {
     index: true,
