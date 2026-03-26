@@ -373,7 +373,7 @@ function drawScene(
 
   // ── Layout anchors ─────────────────────────────────────────────
   const anvilCX    = w * 0.62;
-  const anvilTopY  = h * 0.44;
+  const anvilTopY  = h * 0.38;
   const anvilScale = 0.88;
 
   // Impact point: where the hammer face contacts the anvil
@@ -439,7 +439,7 @@ function drawScene(
     }
   };
 
-  if (angleDiff < 0.08) {
+  if (angleDiff < 0.08 && time % 3 === 0) {
     // ── Type 0: Large bright sparks — scaled by strike intensity ──
     const largeCount = Math.round((5 + Math.floor(Math.random() * 4)) * intensity);
     for (let i = 0; i < largeCount; i++) {
@@ -542,7 +542,7 @@ export function IronAnvilSection() {
   const canvasRef  = useRef<HTMLCanvasElement>(null);
   const textRef    = useRef<HTMLDivElement>(null);
   // offset: angle offset from impact (negative = raised, 0 = striking)
-  const stateRef   = useRef({ offset: 0.9, time: 0, sparks: [] as Spark[] });
+  const stateRef   = useRef({ offset: 0.9, time: 0, sparks: [] as Spark[], sparked: false });
   const rafRef     = useRef(0);
 
   useEffect(() => {
