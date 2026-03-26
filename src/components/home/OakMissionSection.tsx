@@ -1,7 +1,6 @@
 'use client';
 
 import { useRef, useEffect } from 'react';
-import { useGSAP } from '@/hooks/useGSAP';
 
 interface Segment {
   x1: number; y1: number;
@@ -181,7 +180,7 @@ export function OakMissionSection() {
   const rafRef = useRef(0);
   const visibleRef = useRef(false);
 
-  // Generate roots on mount
+  // Canvas setup: resize, generate roots, render loop, IntersectionObserver
   useEffect(() => {
     const canvas = canvasRef.current;
     const section = sectionRef.current;
@@ -204,7 +203,7 @@ export function OakMissionSection() {
     resize();
     window.addEventListener('resize', resize);
 
-    // Pause canvas rendering when section is not visible
+    // Pause canvas rendering when section is not visible (performance)
     const observer = new IntersectionObserver(
       ([entry]) => { visibleRef.current = entry.isIntersecting; },
       { rootMargin: '100px' }
@@ -230,90 +229,104 @@ export function OakMissionSection() {
     };
   }, []);
 
-  useGSAP((gsap, ScrollTrigger) => {
-    if (!sectionRef.current || !textRef.current) return;
+  // Scroll-driven roots progress — passive scroll listener, no JS pinning
+  useEffect(() => {
+    const handleScroll = () => {
+      const section = sectionRef.current;
+      if (!section) return;
+      const rect = section.getBoundingClientRect();
+      const vh = window.innerHeight;
+      // progress: 0 when section top hits viewport top, 1 when section bottom hits viewport bottom
+      const scrollable = rect.height - vh;
+      if (scrollable <= 0) return;
+      const progress = Math.max(0, Math.min(1, -rect.top / scrollable));
+      progressRef.current = progress;
+    };
 
-    const textElements = textRef.current.querySelectorAll('.mission-text-item');
-    const proxy = { progress: 0 };
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    // Compute initial value in case page loads mid-scroll
+    handleScroll();
 
-    const tl = gsap.timeline({
-      scrollTrigger: {
-        trigger: sectionRef.current,
-        start: 'top top',
-        end: '+=180%',
-        pin: true,
-        pinType: 'transform',
-        pinSpacing: true,
-        scrub: true,  // instant scrub — no lag between scroll and animation
-        anticipatePin: 1,  // pre-pin 1px early to prevent jump
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  // Text fade-in — IntersectionObserver triggers once on enter
+  useEffect(() => {
+    const section = sectionRef.current;
+    const textEls = textRef.current?.querySelectorAll('.mission-text-item');
+    if (!section || !textEls || textEls.length === 0) return;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          textEls.forEach((el, i) => {
+            setTimeout(() => {
+              (el as HTMLElement).style.opacity = '1';
+              (el as HTMLElement).style.transform = 'translateX(0)';
+            }, i * 150);
+          });
+          observer.disconnect();
+        }
       },
-    });
-
-    // 0.0–0.55: Roots grow (progress 0→1)
-    tl.to(proxy, {
-      progress: 1,
-      duration: 0.55,
-      ease: 'none',
-      onUpdate: () => { progressRef.current = proxy.progress; },
-    }, 0);
-
-    // 0.08–0.40: Text fades in
-    textElements.forEach((el, i) => {
-      tl.fromTo(el,
-        { opacity: 0, x: -25 },
-        { opacity: 1, x: 0, duration: 0.10, ease: 'power3.out' },
-        0.08 + i * 0.06
-      );
-    });
-
-    // 0.65–0.85: Text fades, roots shrink back
-    tl.to(textRef.current,
-      { opacity: 0, x: -20, duration: 0.10, ease: 'power2.in' },
-      0.62
+      { threshold: 0.2 }
     );
-    tl.to(proxy, {
-      progress: 0,
-      duration: 0.20,
-      ease: 'power2.in',
-      onUpdate: () => { progressRef.current = proxy.progress; },
-    }, 0.68);
+
+    observer.observe(section);
+    return () => observer.disconnect();
   }, []);
 
   return (
     <section
       ref={sectionRef}
-      className="relative min-h-screen bg-[var(--bg-primary)] overflow-hidden will-change-transform"
+      className="relative bg-[var(--bg-primary)] overflow-hidden"
+      style={{ minHeight: '180vh' }}
     >
-      <div className="absolute inset-0 flex items-center">
+      {/* Canvas layer — absolutely fills the section, sticky so it stays in view while scrolling */}
+      <div className="absolute inset-0 pointer-events-none">
+        <div className="sticky top-0 h-screen">
+          {/* Roots Canvas — right side.
+              Mobile: positioned further right (w-[90%] -right-[30%]) so roots are partially visible
+              as a background element but don't dominate the readable text area.
+              lg+: normal positioning w-[73%] -right-[15%].
+          */}
+          <div className="absolute -right-[30%] lg:-right-[15%] top-0 bottom-0 w-[90%] lg:w-[73%] opacity-40 lg:opacity-100">
+            <canvas ref={canvasRef} className="w-full h-full" />
+          </div>
+        </div>
+      </div>
+
+      {/* Text layer — sticky so it stays in place while user scrolls through the section */}
+      <div className="sticky top-0 h-screen flex items-center">
         {/* Text — left side
             On mobile: full-width with extra right padding so roots behind don't cover text.
             On lg+: 45% width, roots fill the right side.
         */}
-        {/* Mobile: full-width, with generous right padding (pr-16 = 4rem) to keep text clear
-            of the partially-visible root canvas behind it. lg+: restores natural 45% column. */}
         <div ref={textRef} className="w-full lg:w-[45%] px-6 pr-16 sm:pr-8 lg:pr-6 lg:pl-12 xl:pl-20 relative z-10">
-          <span className="mission-text-item block font-[family-name:var(--font-accent)] text-sm tracking-[0.2em] uppercase text-[var(--accent-oak)] mb-4 opacity-0">
+          <span
+            className="mission-text-item block font-[family-name:var(--font-accent)] text-sm tracking-[0.2em] uppercase text-[var(--accent-oak)] mb-4"
+            style={{ opacity: 0, transform: 'translateX(-1.5rem)', transition: 'opacity 0.7s ease, transform 0.7s ease' }}
+          >
             Our Mission
           </span>
-          <h2 className="mission-text-item font-[family-name:var(--font-display)] text-[var(--text-h1)] text-[var(--text-primary)] leading-tight mb-6 opacity-0">
+          <h2
+            className="mission-text-item font-[family-name:var(--font-display)] text-[var(--text-h1)] text-[var(--text-primary)] leading-tight mb-6"
+            style={{ opacity: 0, transform: 'translateX(-1.5rem)', transition: 'opacity 0.7s ease, transform 0.7s ease' }}
+          >
             What&apos;s Our Mission?
           </h2>
           {/* text-base on mobile (16px) — stays readable; text-lg on md+ */}
-          <p className="mission-text-item text-base md:text-lg text-[var(--text-secondary)] leading-relaxed mb-4 max-w-lg opacity-0">
+          <p
+            className="mission-text-item text-base md:text-lg text-[var(--text-secondary)] leading-relaxed mb-4 max-w-lg"
+            style={{ opacity: 0, transform: 'translateX(-1.5rem)', transition: 'opacity 0.7s ease, transform 0.7s ease' }}
+          >
             To create a space where the hardest questions about faith aren&apos;t avoided — they&apos;re welcomed. Where Scripture is the foundation, not a prop. Where honesty matters more than polish.
           </p>
-          <p className="mission-text-item text-base md:text-lg text-[var(--text-secondary)] leading-relaxed max-w-lg opacity-0">
+          <p
+            className="mission-text-item text-base md:text-lg text-[var(--text-secondary)] leading-relaxed max-w-lg"
+            style={{ opacity: 0, transform: 'translateX(-1.5rem)', transition: 'opacity 0.7s ease, transform 0.7s ease' }}
+          >
             Iron &amp; Oak exists to sharpen believers and invite skeptics into the same conversation — one that doesn&apos;t flinch.
           </p>
-        </div>
-
-        {/* Roots Canvas — right side.
-            Mobile: positioned further right (w-[90%] -right-[30%]) so roots are partially visible
-            as a background element but don't dominate the readable text area.
-            lg+: normal positioning w-[73%] -right-[15%].
-        */}
-        <div className="absolute -right-[30%] lg:-right-[15%] top-0 bottom-0 w-[90%] lg:w-[73%] pointer-events-none opacity-40 lg:opacity-100 will-change-transform">
-          <canvas ref={canvasRef} className="w-full h-full" />
         </div>
       </div>
     </section>
