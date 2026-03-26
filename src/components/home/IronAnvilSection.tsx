@@ -642,7 +642,7 @@ export function IronAnvilSection() {
   return (
     <section
       ref={sectionRef}
-      className="relative min-h-screen bg-[var(--bg-primary)] overflow-hidden will-change-transform"
+      className="relative min-h-[80vh] lg:min-h-screen bg-[var(--bg-primary)] will-change-transform pt-16 md:pt-24"
     >
       <div className="absolute inset-0 flex items-center">
         {/* Text — left side.
