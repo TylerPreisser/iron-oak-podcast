@@ -30,9 +30,25 @@ export function Footer() {
             <p className="text-sm text-[var(--text-secondary)] mb-4">
               Never miss an episode. Join the launch list.
             </p>
-            <form className="flex gap-2" onSubmit={(e) => e.preventDefault()}>
+            <form className="flex gap-2" onSubmit={async (e) => {
+              e.preventDefault();
+              const form = e.currentTarget;
+              const email = (form.querySelector('input[name=email]') as HTMLInputElement)?.value;
+              try {
+                await fetch('https://formsubmit.co/ajax/tylerpreisser@gmail.com', {
+                  method: 'POST',
+                  headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+                  body: JSON.stringify({ email, _subject: 'New Iron & Oak Subscriber (footer)' }),
+                });
+                form.reset();
+                const btn = form.querySelector('button');
+                if (btn) { btn.textContent = 'Subscribed!'; setTimeout(() => { btn.textContent = 'Join'; }, 3000); }
+              } catch { /* silently fail */ }
+            }}>
               <input
                 type="email"
+                name="email"
+                required
                 placeholder="Your email"
                 className="flex-1 h-10 px-4 text-sm rounded-[var(--radius-md)] bg-[var(--bg-secondary)] border border-[var(--border-default)] text-[var(--text-primary)] placeholder:text-[var(--text-tertiary)] focus:outline-none focus:border-[var(--accent-oak)] transition-colors duration-300"
               />
@@ -42,6 +58,7 @@ export function Footer() {
               >
                 Join
               </button>
+              <input type="hidden" name="_captcha" value="false" />
             </form>
           </div>
 

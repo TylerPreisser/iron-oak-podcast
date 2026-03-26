@@ -44,21 +44,57 @@ export function HeroSection() {
               Two men from the Kansas plains digging into Scripture, doubt, and the questions that matter most.
             </p>
 
-            {/* Email form: stacks vertically on mobile, side-by-side on sm+ */}
-            <div className="hero-email max-w-md mt-2 mx-auto lg:mx-0">
-              <form className="flex flex-col sm:flex-row gap-2" onSubmit={(e) => e.preventDefault()}>
-                <input
-                  type="email"
-                  placeholder="Be the first to hear new episodes"
-                  className="flex-1 h-12 px-5 rounded-full bg-[var(--bg-secondary)] border border-[var(--border-default)] text-[var(--text-primary)] placeholder:text-[var(--text-tertiary)] focus:outline-none focus:border-[var(--accent-oak)] transition-colors duration-300 text-sm"
-                />
-                {/* min-h-12 ensures 48px tap target on mobile */}
-                <button
-                  type="submit"
-                  className="h-12 min-h-[48px] px-6 rounded-full bg-[var(--accent-oak)] text-white font-medium text-sm hover:bg-[var(--accent-oak-light)] transition-colors duration-300 active:scale-[0.97]"
-                >
-                  Join
-                </button>
+            {/* Mailing list form — first name + email, submits to formsubmit.co */}
+            <div className="hero-email max-w-lg mt-2 mx-auto lg:mx-0">
+              <form
+                className="flex flex-col gap-2"
+                action="https://formsubmit.co/ajax/tylerpreisser@gmail.com"
+                method="POST"
+                onSubmit={async (e) => {
+                  e.preventDefault();
+                  const form = e.currentTarget;
+                  const data = new FormData(form);
+                  try {
+                    await fetch('https://formsubmit.co/ajax/tylerpreisser@gmail.com', {
+                      method: 'POST',
+                      headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+                      body: JSON.stringify({
+                        name: data.get('name'),
+                        email: data.get('email'),
+                        _subject: 'New Iron & Oak Podcast Subscriber',
+                      }),
+                    });
+                    form.reset();
+                    const btn = form.querySelector('button');
+                    if (btn) { btn.textContent = 'Subscribed!'; setTimeout(() => { btn.textContent = 'Join'; }, 3000); }
+                  } catch { /* silently fail */ }
+                }}
+              >
+                <div className="flex flex-col sm:flex-row gap-2">
+                  <input
+                    type="text"
+                    name="name"
+                    required
+                    placeholder="First name"
+                    className="sm:w-[140px] h-12 px-5 rounded-full bg-[var(--bg-secondary)] border border-[var(--border-default)] text-[var(--text-primary)] placeholder:text-[var(--text-tertiary)] focus:outline-none focus:border-[var(--accent-oak)] transition-colors duration-300 text-sm"
+                  />
+                  <input
+                    type="email"
+                    name="email"
+                    required
+                    placeholder="Email address"
+                    className="flex-1 h-12 px-5 rounded-full bg-[var(--bg-secondary)] border border-[var(--border-default)] text-[var(--text-primary)] placeholder:text-[var(--text-tertiary)] focus:outline-none focus:border-[var(--accent-oak)] transition-colors duration-300 text-sm"
+                  />
+                  <button
+                    type="submit"
+                    className="h-12 min-h-[48px] px-6 rounded-full bg-[var(--accent-oak)] text-white font-medium text-sm hover:bg-[var(--accent-oak-light)] transition-colors duration-300 active:scale-[0.97]"
+                  >
+                    Join
+                  </button>
+                </div>
+                {/* formsubmit.co spam protection */}
+                <input type="hidden" name="_captcha" value="false" />
+                <input type="hidden" name="_template" value="table" />
               </form>
             </div>
           </div>
