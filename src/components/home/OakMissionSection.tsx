@@ -244,8 +244,8 @@ export function OakMissionSection() {
       // Positive as soon as the section top enters the viewport from below
       const visibleFromBottom = vh - rect.top;
 
-      // Roots progress: start as soon as section appears, complete over 500px
-      progressRef.current = Math.max(0, Math.min(1, visibleFromBottom / 500));
+      // Roots progress: start 300px BEFORE section even enters viewport, complete over 400px
+      progressRef.current = Math.max(0, Math.min(1, (visibleFromBottom + 300) / 400));
 
       // Opacity: start visible as soon as section appears on screen
       // Fade in: first 150px of the section being visible
@@ -254,10 +254,10 @@ export function OakMissionSection() {
       const distFromBottom = rect.bottom - vh;
 
       let opacity = 0;
-      if (visibleFromBottom < 0) {
+      if (visibleFromBottom < -200) {
         opacity = 0;
-      } else if (visibleFromBottom < 150) {
-        opacity = visibleFromBottom / 150;
+      } else if (visibleFromBottom < 0) {
+        opacity = (visibleFromBottom + 200) / 200;
       } else if (distFromBottom > 200) {
         opacity = 1;
       } else if (distFromBottom > 0) {
