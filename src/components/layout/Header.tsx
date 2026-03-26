@@ -26,31 +26,15 @@ export function Header() {
           : 'bg-transparent'
       )}
     >
-      <div className="container-default flex items-center justify-between h-18 lg:h-22">
+      <div className="container-default flex items-center h-18 lg:h-22">
         <button onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}>
           <Image
             src={assetPath("/images/iron-oak-icon.webp")}
             alt="Iron & Oak"
-            width={120}
-            height={120}
-            className="w-14 h-14 lg:w-16 lg:h-16"
+            width={160}
+            height={160}
+            className="w-16 h-16 lg:w-20 lg:h-20"
           />
-        </button>
-
-        <button
-          onClick={() => {
-            const el = document.getElementById('subscribe');
-            if (el) el.scrollIntoView({ behavior: 'smooth' });
-          }}
-          className={cn(
-            'inline-flex items-center justify-center h-9 px-5 text-sm font-medium',
-            'rounded-full bg-[var(--accent-oak)] text-white',
-            'hover:bg-[var(--accent-oak-light)] transition-all duration-300',
-            'hover:scale-[1.03] hover:shadow-[var(--shadow-glow)]',
-            'active:scale-[0.97]'
-          )}
-        >
-          Subscribe
         </button>
       </div>
     </header>
