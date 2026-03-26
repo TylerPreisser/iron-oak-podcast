@@ -282,17 +282,16 @@ function drawSparks(
 // ============================================================
 // MAIN SCENE — pivot-rotation hammer animation.
 //
-// stateRef.current.angle is the only value that changes.
-// Geometry is computed fresh each frame so it always fits
-// the current canvas size.
+// stateRef.current.offset is the only value that changes.
+// Geometry (including impactAngle) is computed fresh each frame
+// so it always fits the current canvas size regardless of resize.
 // ============================================================
 function drawScene(
   ctx: CanvasRenderingContext2D,
   w: number, h: number,
-  angle: number,
+  offset: number,
   time: number,
   sparks: Spark[],
-  impactAngle: number,
 ) {
   ctx.clearRect(0, 0, w, h);
 
@@ -309,13 +308,23 @@ function drawScene(
   const pivotX = w * 0.82;
   const pivotY = anvilTopY - 250;
 
-  // Handle length: exact distance from pivot to impact point
+  // Compute impact angle fresh from current canvas dimensions
   const dx = impactX - pivotX;
   const dy = impactY - pivotY;
-  const handleLength = Math.sqrt(dx * dx + dy * dy);
+  const impactAngle = Math.atan2(dy, dx);
 
-  // ── Glow intensity — brightest when angle ≈ impactAngle ────────
-  const angleDiff      = Math.abs(angle - impactAngle);
+  // Handle length: distance from pivot to impact point, corrected so
+  // the striking FACE (at handleLength + headLen/2) lands on impactX/Y.
+  // drawHammer centers the head at handleLength; the face is headLen/2
+  // beyond that. Subtract headLen/2 so the face aligns with the impact point.
+  const headLen = 56; // must match drawHammer's headLen
+  const handleLength = Math.sqrt(dx * dx + dy * dy) - headLen / 2;
+
+  // Current angle = impactAngle + offset (offset tweened by GSAP)
+  const angle = impactAngle + offset;
+
+  // ── Glow intensity — brightest when offset ≈ 0 (at impact) ────
+  const angleDiff      = Math.abs(offset);
   const glowIntensity  = Math.max(0, 1 - angleDiff / 0.07);
 
   // ── Ambient screen glow during strike ─────────────────────────
@@ -386,8 +395,8 @@ export function IronAnvilSection() {
   const sectionRef = useRef<HTMLElement>(null);
   const canvasRef  = useRef<HTMLCanvasElement>(null);
   const textRef    = useRef<HTMLDivElement>(null);
-  // angle: current rotation; impactAngle: pre-computed each resize
-  const stateRef   = useRef({ angle: 0, impactAngle: 0, time: 0, sparks: [] as Spark[] });
+  // offset: angle offset from impact (negative = raised, 0 = striking)
+  const stateRef   = useRef({ offset: -0.6, time: 0, sparks: [] as Spark[] });
   const rafRef     = useRef(0);
 
   useEffect(() => {
@@ -395,22 +404,6 @@ export function IronAnvilSection() {
     if (!canvas) return;
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
-
-    const computeImpactAngle = (cw: number, ch: number) => {
-      const anvilTopY  = ch * 0.50;
-      const anvilCX    = cw * 0.62;
-      const impactX    = anvilCX - 20;
-      const impactY    = anvilTopY - 2;
-      const pivotX     = cw * 0.82;
-      const pivotY     = anvilTopY - 250;
-      const ia         = Math.atan2(impactY - pivotY, impactX - pivotX);
-      stateRef.current.impactAngle = ia;
-      // Initialise angle to raised position if it hasn't been set yet
-      // (only on first resize — after that GSAP owns the value)
-      if (stateRef.current.angle === 0) {
-        stateRef.current.angle = ia - 0.6;
-      }
-    };
 
     const resize = () => {
       const dpr    = Math.min(window.devicePixelRatio, 2);
@@ -422,7 +415,6 @@ export function IronAnvilSection() {
       canvas.style.width  = `${rect.width}px`;
       canvas.style.height = `${rect.height}px`;
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-      computeImpactAngle(rect.width, rect.height);
     };
     resize();
     window.addEventListener('resize', resize);
@@ -432,7 +424,7 @@ export function IronAnvilSection() {
       const cw = canvas.width  / Math.min(window.devicePixelRatio, 2);
       const ch = canvas.height / Math.min(window.devicePixelRatio, 2);
       s.time += 1;
-      drawScene(ctx, cw, ch, s.angle, s.time, s.sparks, s.impactAngle);
+      drawScene(ctx, cw, ch, s.offset, s.time, s.sparks);
       rafRef.current = requestAnimationFrame(render);
     };
     rafRef.current = requestAnimationFrame(render);
@@ -446,47 +438,44 @@ export function IronAnvilSection() {
   useGSAP((gsap, ScrollTrigger) => {
     if (!sectionRef.current || !textRef.current) return;
 
-    // ── Hammer animation: tween a single angle value ───────────────
-    // impactAngle is computed in useEffect on mount. We read it once
-    // here. Because useGSAP runs after mount, impactAngle is ready.
-    //
-    // We re-read impactAngle from stateRef on each timeline update so
-    // the animation stays correct after a resize (impactAngle updates
-    // in place). We tween a plain object and forward to stateRef.
-    const anim = { angle: stateRef.current.impactAngle - 0.6 };
+    // ── Hammer animation: tween an offset from the impact angle ───
+    // drawScene computes impactAngle fresh each frame from current
+    // canvas dimensions, so the animation stays correct after resize.
+    // We only tween a fixed offset value (negative = raised, 0 = striking).
+    const anim = { offset: -0.6 };
 
     const tl = gsap.timeline({ repeat: -1, repeatDelay: 0.5, paused: true });
 
     // Swing down to impact
     tl.to(anim, {
-      get angle() { return stateRef.current.impactAngle; },
+      offset: 0,
       duration: 0.4,
       ease: 'power2.in',
-      onUpdate: () => { stateRef.current.angle = anim.angle; },
+      onUpdate: () => { stateRef.current.offset = anim.offset; },
     });
 
     // Bounce back up slightly
     tl.to(anim, {
-      get angle() { return stateRef.current.impactAngle - 0.15; },
+      offset: -0.15,
       duration: 0.25,
       ease: 'power2.out',
-      onUpdate: () => { stateRef.current.angle = anim.angle; },
+      onUpdate: () => { stateRef.current.offset = anim.offset; },
     });
 
     // Strike again
     tl.to(anim, {
-      get angle() { return stateRef.current.impactAngle; },
+      offset: 0,
       duration: 0.35,
       ease: 'power2.in',
-      onUpdate: () => { stateRef.current.angle = anim.angle; },
+      onUpdate: () => { stateRef.current.offset = anim.offset; },
     });
 
     // Raise back up
     tl.to(anim, {
-      get angle() { return stateRef.current.impactAngle - 0.6; },
+      offset: -0.6,
       duration: 0.5,
       ease: 'power2.out',
-      onUpdate: () => { stateRef.current.angle = anim.angle; },
+      onUpdate: () => { stateRef.current.offset = anim.offset; },
     });
 
     // ── ScrollTrigger: pin section, play/pause animation ───────────
