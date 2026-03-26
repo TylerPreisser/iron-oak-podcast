@@ -669,7 +669,12 @@ export function IronAnvilSection() {
             Mobile: reduced opacity so it reads as a background texture behind the text.
             lg+: full opacity, constrained to right 58%.
         */}
-        <div className="absolute right-0 -top-[80%] lg:top-0 bottom-0 w-[70%] lg:w-[58%] pointer-events-none opacity-30 lg:opacity-100 will-change-transform">
+        {/* Canvas container.
+            Mobile: -top-[25%] keeps the hammer animation in view (was -top-[80%] which
+            pushed the canvas so far up only the static anvil base was visible).
+            lg+: top-0 (full height, no offset needed).
+        */}
+        <div className="absolute right-0 -top-[25%] lg:top-0 bottom-0 w-[70%] lg:w-[58%] pointer-events-none opacity-30 lg:opacity-100 will-change-transform">
           <canvas ref={canvasRef} className="w-full h-full" />
         </div>
       </div>

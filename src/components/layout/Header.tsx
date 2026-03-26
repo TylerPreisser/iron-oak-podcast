@@ -32,7 +32,10 @@ export function Header() {
           'fixed top-0 left-0 right-0 z-50 transition-all duration-300',
           scrolled
             ? 'backdrop-blur-[12px] bg-[var(--bg-primary)]/80 shadow-[0_1px_0_rgba(255,255,255,0.06)]'
-            : 'bg-[var(--bg-primary)]'
+            /* When not scrolled: gradient from solid bg at the top (covers notch/Dynamic Island)
+               to transparent at the bottom so it blends seamlessly into the hero gradient below.
+               iOS Safari fix: -webkit-backdrop-filter needed on the blur variant above. */
+            : 'bg-gradient-to-b from-[var(--bg-primary)] via-[var(--bg-primary)]/60 to-transparent'
         )}
         style={{ paddingTop: 'env(safe-area-inset-top, 0px)' }}
       >
