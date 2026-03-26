@@ -1,49 +1,55 @@
 'use client';
 
-import { useRef } from 'react';
-import { useGSAP } from '@/hooks/useGSAP';
+import { useRef, useEffect, useState } from 'react';
 
 export function ConceptSection() {
   const sectionRef = useRef<HTMLElement>(null);
-  const textRef = useRef<HTMLDivElement>(null);
+  const [opacity, setOpacity] = useState(0);
 
-  useGSAP((gsap) => {
-    if (!sectionRef.current || !textRef.current) return;
+  useEffect(() => {
+    const handleScroll = () => {
+      const section = sectionRef.current;
+      if (!section) return;
+      const rect = section.getBoundingClientRect();
+      const vh = window.innerHeight;
 
-    // Single timeline pinned to the section: fade in, hold, fade out
-    const tl = gsap.timeline({
-      scrollTrigger: {
-        trigger: sectionRef.current,
-        start: 'top top',
-        end: '+=150%',
-        pin: true,
-        scrub: 0.6,
-      },
-    });
+      // How far through the section are we? 0 = just entered, 1 = about to leave
+      const sectionH = rect.height;
+      const scrolled = -rect.top / (sectionH - vh);
+      const t = Math.max(0, Math.min(1, scrolled));
 
-    // 0-40%: fade in + rise
-    tl.fromTo(textRef.current,
-      { opacity: 0, y: 40 },
-      { opacity: 1, y: 0, duration: 0.4, ease: 'none' },
-      0
-    );
+      // Fade in during first 30%, hold during middle, fade out during last 30%
+      let op = 0;
+      if (t < 0.3) {
+        op = t / 0.3;
+      } else if (t < 0.7) {
+        op = 1;
+      } else {
+        op = 1 - (t - 0.7) / 0.3;
+      }
+      setOpacity(Math.max(0, Math.min(1, op)));
+    };
 
-    // 40-70%: hold visible
-    tl.to(textRef.current, { opacity: 1, duration: 0.3 });
-
-    // 70-100%: fade out + rise
-    tl.to(textRef.current, { opacity: 0, y: -30, duration: 0.3, ease: 'none' });
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    handleScroll();
+    return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
   return (
     <section
       ref={sectionRef}
-      className="relative min-h-screen bg-[var(--bg-primary)] flex items-center justify-center"
+      className="relative bg-[var(--bg-primary)]"
+      style={{ height: '200vh' }}
     >
-      <div ref={textRef} className="max-w-2xl px-6 text-center opacity-0">
-        <p className="font-[family-name:var(--font-display)] text-xl md:text-2xl lg:text-3xl text-[var(--text-secondary)] leading-relaxed italic">
-          Not to lecture. Not to perform. To dig into Scripture, into doubt, into the questions most people are afraid to ask. A space where faith gets pressure-tested and Christ remains the answer.
-        </p>
+      <div
+        className="sticky top-0 h-screen flex items-center justify-center"
+        style={{ opacity }}
+      >
+        <div className="max-w-2xl px-6 text-center">
+          <p className="font-[family-name:var(--font-display)] text-xl md:text-2xl lg:text-3xl text-[var(--text-secondary)] leading-relaxed italic">
+            Not to lecture. Not to perform. To dig into Scripture, into doubt, into the questions most people are afraid to ask. A space where faith gets pressure-tested and Christ remains the answer.
+          </p>
+        </div>
       </div>
     </section>
   );
