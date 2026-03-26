@@ -21,14 +21,12 @@ export function ConceptSection() {
       // Before t=0 (section still below viewport top), opacity stays 0
       const t = Math.max(0, Math.min(1, -rect.top / (sectionH - vh)));
 
-      // Fade in (0-30%), hold (30-80%), fade out (80-100%)
+      // Fade in (0-30%), then stay visible forever
       let op = 0;
       if (t < 0.30) {
         op = t / 0.30;
-      } else if (t < 0.80) {
-        op = 1;
       } else {
-        op = 1 - (t - 0.80) / 0.20;
+        op = 1;
       }
 
       content.style.opacity = String(Math.max(0, Math.min(1, op)));
