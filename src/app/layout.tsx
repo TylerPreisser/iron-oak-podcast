@@ -152,7 +152,16 @@ export default function RootLayout({
               <ForgeIntro />
               <IronSparks />
               <Header />
-              <main className="flex-1">
+              {/* padding-top compensates for the extra height the header gains from
+                  env(safe-area-inset-top) on notched iPhones. Page-level components
+                  already handle normal header height (pt-24 etc.) — this only adds
+                  the safe area portion on top of that so content is never hidden
+                  behind the Dynamic Island / notch. Zero impact on non-notch devices
+                  because env() resolves to 0px there. */}
+              <main
+                className="flex-1"
+                style={{ paddingTop: 'env(safe-area-inset-top, 0px)' }}
+              >
                 {children}
               </main>
               <Footer />
