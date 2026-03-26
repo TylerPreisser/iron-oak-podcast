@@ -304,10 +304,11 @@ function drawScene(
   const impactX = anvilCX - 20;
   const impactY = anvilTopY - 2;
 
-  // Pivot: hand-grip at the RIGHT side, at anvil face height.
+  // Pivot: hand-grip at the RIGHT side, slightly ABOVE anvil face.
   // Handle extends LEFT from here to the hammer head near the anvil.
+  // Raised ~35px so the arc brings the head down onto the TOP face.
   const pivotX = w * 0.92;
-  const pivotY = anvilTopY;
+  const pivotY = anvilTopY - 35;
 
   // Compute impact angle fresh from current canvas dimensions
   const dx = impactX - pivotX;
