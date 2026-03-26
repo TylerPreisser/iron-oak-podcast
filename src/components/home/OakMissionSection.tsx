@@ -239,21 +239,32 @@ export function OakMissionSection() {
     const handleScroll = () => {
       const rect = section.getBoundingClientRect();
       const vh = window.innerHeight;
-      // Start progress when section top is 40% from the bottom of viewport (enters early)
-      const earlyStart = vh * 0.4;
-      const scrollable = rect.height - vh + earlyStart;
-      if (scrollable <= 0) return;
-      const progress = Math.max(0, Math.min(1, (earlyStart - rect.top) / scrollable));
-      progressRef.current = progress;
 
-      // Fade in during 0-10%, hold 10-88%, fade out 88-100%
+      // Pixels scrolled past the section top entering the viewport
+      // 0 = section top just reached viewport top
+      // positive = scrolled past that point
+      const scrolled = -rect.top;
+
+      // Roots progress: 0 at entry, 1 after 600px of scrolling
+      progressRef.current = Math.max(0, Math.min(1, scrolled / 600));
+
+      // Opacity: fixed pixel distances, not ratios
+      // Fade in: from 0px to 100px scrolled past section top
+      // Hold: from 100px to (sectionBottom - viewport - 200px)
+      // Fade out: last 200px before section leaves
+      const distFromBottom = rect.bottom - vh;
+
       let opacity = 0;
-      if (progress < 0.10) {
-        opacity = progress / 0.10;
-      } else if (progress < 0.88) {
-        opacity = 1;
+      if (scrolled < 0) {
+        opacity = 0; // haven't reached section yet
+      } else if (scrolled < 100) {
+        opacity = scrolled / 100; // fade in over 100px
+      } else if (distFromBottom > 200) {
+        opacity = 1; // hold
+      } else if (distFromBottom > 0) {
+        opacity = distFromBottom / 200; // fade out over last 200px
       } else {
-        opacity = 1 - (progress - 0.88) / 0.12;
+        opacity = 0; // past section
       }
       opacity = Math.max(0, Math.min(1, opacity));
 
