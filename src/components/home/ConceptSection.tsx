@@ -30,14 +30,18 @@ export function ConceptSection() {
       const scrolled = (vh - rect.top) / totalScroll;
       const t = Math.max(0, Math.min(1, scrolled));
 
-      // Fade in during first 35% of scroll, hold, fade out during last 20%
+      // Black space first (0-25%), fade in (25-50%), hold (50-70%), fade out (70-90%), black space (90-100%)
       let op = 0;
-      if (t < 0.35) {
-        op = t / 0.35;
-      } else if (t < 0.80) {
-        op = 1;
+      if (t < 0.25) {
+        op = 0; // scroll through black space first
+      } else if (t < 0.50) {
+        op = (t - 0.25) / 0.25; // fade in
+      } else if (t < 0.70) {
+        op = 1; // hold
+      } else if (t < 0.90) {
+        op = 1 - (t - 0.70) / 0.20; // fade out
       } else {
-        op = 1 - (t - 0.80) / 0.20;
+        op = 0; // black space before next section
       }
 
       content.style.opacity = String(Math.max(0, Math.min(1, op)));
@@ -52,7 +56,7 @@ export function ConceptSection() {
     <section
       ref={sectionRef}
       className="relative bg-[var(--bg-primary)]"
-      style={{ height: '200vh' }}
+      style={{ height: '160vh' }}
     >
       <div
         ref={contentRef}
