@@ -439,7 +439,7 @@ function drawScene(
     }
   };
 
-  if (angleDiff < 0.08 && time % 3 === 0) {
+  if (angleDiff < 0.08) {
     // ── Type 0: Large bright sparks — scaled by strike intensity ──
     const largeCount = Math.round((5 + Math.floor(Math.random() * 4)) * intensity);
     for (let i = 0; i < largeCount; i++) {
