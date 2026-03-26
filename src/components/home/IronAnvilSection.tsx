@@ -20,6 +20,15 @@ interface Spark {
 // cx/cy = center of the anvil body (cx = horizontal throat center,
 //         cy = top of the working face).
 // ============================================================
+// Preload the anvil image once
+let anvilImg: HTMLImageElement | null = null;
+let anvilLoaded = false;
+if (typeof window !== 'undefined') {
+  anvilImg = new window.Image();
+  anvilImg.onload = () => { anvilLoaded = true; };
+  anvilImg.src = '/images/anvil.png';
+}
+
 function drawAnvil(
   ctx: CanvasRenderingContext2D,
   cx: number,
@@ -27,90 +36,19 @@ function drawAnvil(
   scale: number,
   alpha: number,
 ) {
-  if (alpha <= 0) return;
+  if (alpha <= 0 || !anvilLoaded || !anvilImg) return;
   ctx.save();
   ctx.globalAlpha = alpha;
-  ctx.translate(cx, cy);
-  ctx.scale(scale, scale);
 
-  // Drop shadow
-  ctx.fillStyle = 'rgba(0,0,0,0.3)';
-  ctx.beginPath();
-  ctx.ellipse(-40, 115, 135, 14, 0, 0, Math.PI * 2);
-  ctx.fill();
+  // The image is 280x180. We want the top of the anvil face
+  // to align with cy. The face is about 5% from the top of the image.
+  // Scale the image to ~350px wide (matching previous anvil size) × scale factor
+  const imgW = 350 * scale;
+  const imgH = (180 / 280) * imgW;
+  const faceOffsetY = imgH * 0.05; // face is near the top of the image
 
-  // ── Main silhouette path — clockwise from horn tip ─────────────
-  // Coordinate system: (0,0) = top of face at body center
-  // Total width ~350px: horn tip at x=-200, heel right at x=+120
-  // Total height ~105px: face at y≈0, base at y≈102
-  ctx.beginPath();
-  ctx.moveTo(-200, 8);                                          // horn tip
-
-  // Top face — nearly flat, very gentle rise to the right
-  ctx.quadraticCurveTo(-100, -3, 100, -2);                     // smooth flat top
-
-  // Heel — short vertical drop on right side
-  ctx.lineTo(105, 20);                                          // heel bottom
-
-  // Right waist — BIG smooth concave scoop down to base
-  ctx.bezierCurveTo(100, 40, 50, 62, 30, 65);                  // upper part of scoop
-  ctx.bezierCurveTo(45, 75, 90, 90, 120, 100);                 // lower part flaring to base
-
-  // Base bottom — wide, nearly flat with very subtle arch
-  ctx.lineTo(120, 102);                                         // right edge of base
-  ctx.quadraticCurveTo(0, 95, -120, 102);                      // subtle arch
-  ctx.lineTo(-120, 100);                                        // left edge of base
-
-  // Left waist — concave scoop back up (slightly less deep than right)
-  ctx.bezierCurveTo(-90, 90, -55, 75, -40, 65);                // lower flare from base
-  ctx.bezierCurveTo(-55, 55, -65, 35, -55, 22);                // upper scoop
-
-  // Horn underside — sweeps from body out to horn tip
-  ctx.bezierCurveTo(-70, 28, -140, 22, -200, 8);               // taper to horn tip
-
-  ctx.closePath();
-
-  const bodyGrad = ctx.createLinearGradient(-200, 0, 120, 0);
-  bodyGrad.addColorStop(0,    '#161618');
-  bodyGrad.addColorStop(0.30, '#3A3A4A');
-  bodyGrad.addColorStop(0.50, '#525268');
-  bodyGrad.addColorStop(0.72, '#3E3E50');
-  bodyGrad.addColorStop(0.90, '#2A2A38');
-  bodyGrad.addColorStop(1,    '#1A1A22');
-  ctx.fillStyle = bodyGrad;
-  ctx.fill();
-
-  // Face highlight strip along the flat working surface
-  ctx.beginPath();
-  ctx.moveTo(-200, 8);
-  ctx.quadraticCurveTo(-100, -3, 100, -2);
-  ctx.lineTo(100, 5);
-  ctx.quadraticCurveTo(-100, 4, -200, 8);
-  ctx.closePath();
-  const faceHighlight = ctx.createLinearGradient(-200, 0, 100, 0);
-  faceHighlight.addColorStop(0,   'rgba(70,70,88,0)');
-  faceHighlight.addColorStop(0.45, 'rgba(115,115,138,0.7)');
-  faceHighlight.addColorStop(1,   'rgba(85,85,100,0.35)');
-  ctx.fillStyle = faceHighlight;
-  ctx.fill();
-
-  // Specular top edge line
-  ctx.beginPath();
-  ctx.moveTo(-190, 7);
-  ctx.quadraticCurveTo(-100, -4, 99, -3);
-  ctx.strokeStyle = 'rgba(220,220,240,0.5)';
-  ctx.lineWidth = 1.2;
-  ctx.stroke();
-
-  // Hardy hole (square) on the heel
-  ctx.fillStyle = 'rgba(0,0,0,0.8)';
-  ctx.fillRect(62, 3, 10, 10);
-
-  // Pritchel hole (round) on the heel
-  ctx.beginPath();
-  ctx.arc(82, 8, 4, 0, Math.PI * 2);
-  ctx.fillStyle = 'rgba(0,0,0,0.75)';
-  ctx.fill();
+  // Center horizontally on cx, align face top to cy
+  ctx.drawImage(anvilImg, cx - imgW * 0.55, cy - faceOffsetY, imgW, imgH);
 
   ctx.restore();
 }
