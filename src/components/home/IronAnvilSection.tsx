@@ -663,25 +663,9 @@ export function IronAnvilSection() {
     // We only tween a fixed offset value (negative = raised, 0 = striking).
     const anim = { offset: 0.9 };
 
-    const tl = gsap.timeline({ repeat: -1, repeatDelay: 0.5, paused: true });
+    const tl = gsap.timeline({ repeat: -1, repeatDelay: 0.15, paused: true });
 
-    // Swing down to anvil face
-    tl.to(anim, {
-      offset: 0.06,
-      duration: 0.4,
-      ease: 'power2.in',
-      onUpdate: () => { stateRef.current.offset = anim.offset; },
-    });
-
-    // Back all the way up
-    tl.to(anim, {
-      offset: 0.9,
-      duration: 0.45,
-      ease: 'power2.out',
-      onUpdate: () => { stateRef.current.offset = anim.offset; },
-    });
-
-    // Swing down again
+    // Swing down
     tl.to(anim, {
       offset: 0.06,
       duration: 0.4,
