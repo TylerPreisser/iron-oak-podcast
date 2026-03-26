@@ -14,34 +14,21 @@ export function ConceptSection() {
     const handleScroll = () => {
       const rect = section.getBoundingClientRect();
       const vh = window.innerHeight;
-
-      // The section is 200vh tall with a sticky inner element.
-      // We want the text to start fading in as soon as the section
-      // enters the viewport from below (rect.top < vh) and be fully
-      // visible by the time the section top reaches the viewport top.
-      //
-      // t=0 when section bottom edge enters viewport (rect.top = vh)
-      // t=1 when section top has scrolled fully past (rect.top = -(sectionH - vh))
-      //
-      // For early fade-in: start at t=0 (section just entering),
-      // full opacity by t=0.15, hold, fade out in last 20%.
       const sectionH = rect.height;
-      const totalScroll = sectionH; // total distance from entry to exit
-      const scrolled = (vh - rect.top) / totalScroll;
-      const t = Math.max(0, Math.min(1, scrolled));
 
-      // More black space first (0-40%), fade in (40-60%), hold (60-75%), fade out (75-92%), small gap (92-100%)
+      // t = 0 when the section top hits the viewport top (fully scrolled into view)
+      // t = 1 when the section has been fully scrolled through
+      // Before t=0 (section still below viewport top), opacity stays 0
+      const t = Math.max(0, Math.min(1, -rect.top / (sectionH - vh)));
+
+      // Fade in (0-40%), hold (40-70%), fade out (70-100%)
       let op = 0;
       if (t < 0.40) {
-        op = 0;
-      } else if (t < 0.60) {
-        op = (t - 0.40) / 0.20;
-      } else if (t < 0.75) {
+        op = t / 0.40;
+      } else if (t < 0.70) {
         op = 1;
-      } else if (t < 0.92) {
-        op = 1 - (t - 0.75) / 0.17;
       } else {
-        op = 0;
+        op = 1 - (t - 0.70) / 0.30;
       }
 
       content.style.opacity = String(Math.max(0, Math.min(1, op)));
@@ -56,7 +43,7 @@ export function ConceptSection() {
     <section
       ref={sectionRef}
       className="relative bg-[var(--bg-primary)]"
-      style={{ height: '110vh' }}
+      style={{ height: '200vh' }}
     >
       <div
         ref={contentRef}
