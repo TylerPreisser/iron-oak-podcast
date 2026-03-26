@@ -1,212 +1,52 @@
 'use client';
 
-import { useRef, useEffect, useState } from 'react';
-
-const lines = [
-  'Two men from the Kansas plains sat down to talk about God.',
-  'Not to lecture. Not to perform.',
-  'To dig — into Scripture, into doubt, into the questions most people are afraid to ask.',
-  'Iron & Oak is a space where faith gets pressure-tested and Christ remains the answer.',
-];
-
-interface Ember {
-  x: number;
-  y: number;
-  vx: number;
-  vy: number;
-  size: number;
-  life: number;
-  maxLife: number;
-  turbulencePhase: number;
-  turbulenceSpeed: number;
-}
-
-function emberColor(life: number, maxLife: number): string {
-  const t = life / maxLife;
-  if (t > 0.7) return `rgba(255, ${200 + t * 55}, ${140 + t * 60}, ${0.7 + t * 0.3})`;
-  if (t > 0.4) return `rgba(255, ${120 + t * 120}, ${20 + t * 40}, ${t * 0.9})`;
-  if (t > 0.15) return `rgba(${180 + t * 200}, ${50 + t * 150}, 10, ${t * 0.8})`;
-  return `rgba(${80 + t * 600}, ${15 + t * 200}, 5, ${t * 4})`;
-}
+import { useRef } from 'react';
+import { useGSAP } from '@/hooks/useGSAP';
 
 export function ConceptSection() {
-  const canvasRef = useRef<HTMLCanvasElement>(null);
-  const sectionRef = useRef<HTMLDivElement>(null);
-  const embersRef = useRef<Ember[]>([]);
-  const rafRef = useRef(0);
-  const [scrollProgress, setScrollProgress] = useState(0);
-  const [isActive, setIsActive] = useState(false);
+  const sectionRef = useRef<HTMLElement>(null);
+  const textRef = useRef<HTMLDivElement>(null);
 
-  // Ember canvas
-  useEffect(() => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-    const ctx = canvas.getContext('2d');
-    if (!ctx) return;
+  useGSAP((gsap, ScrollTrigger) => {
+    if (!sectionRef.current || !textRef.current) return;
 
-    const resize = () => {
-      canvas.width = window.innerWidth;
-      canvas.height = window.innerHeight;
-    };
-    resize();
-    window.addEventListener('resize', resize);
-
-    const spawnEmber = (scattered?: boolean): Ember => {
-      const x = Math.random() * canvas.width;
-      const y = scattered ? Math.random() * canvas.height : canvas.height + Math.random() * 60;
-      const angle = -Math.PI / 2 + (Math.random() - 0.5) * 1.4;
-      const speed = 0.8 + Math.random() * 2.5;
-      return {
-        x, y,
-        vx: Math.cos(angle) * speed,
-        vy: Math.sin(angle) * speed,
-        size: 0.8 + Math.random() * 2,
-        life: 1,
-        maxLife: 1 + Math.random() * 2,
-        turbulencePhase: Math.random() * Math.PI * 2,
-        turbulenceSpeed: 0.01 + Math.random() * 0.025,
-      };
-    };
-
-    embersRef.current = Array.from({ length: 60 }, () => spawnEmber(true));
-    let time = 0;
-
-    const draw = () => {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      time += 1;
-
-      embersRef.current.forEach((ember, i) => {
-        const turbX = Math.sin(ember.turbulencePhase + time * ember.turbulenceSpeed) * 0.4;
-        const turbY = Math.cos(ember.turbulencePhase * 1.5 + time * ember.turbulenceSpeed * 0.6) * 0.2;
-        ember.x += ember.vx + turbX;
-        ember.y += ember.vy + turbY;
-        ember.vx *= 0.999;
-        ember.vy *= 0.999;
-        ember.life -= 0.006;
-
-        if (ember.life <= 0 || ember.y < -20 || ember.x < -20 || ember.x > canvas.width + 20) {
-          embersRef.current[i] = spawnEmber(false);
-          return;
-        }
-
-        const t = ember.life / ember.maxLife;
-        const color = emberColor(ember.life, ember.maxLife);
-
-        ctx.save();
-        ctx.translate(ember.x, ember.y);
-
-        const glowSize = ember.size * 5;
-        const glow = ctx.createRadialGradient(0, 0, 0, 0, 0, glowSize);
-        glow.addColorStop(0, `rgba(255, ${100 + t * 100}, 20, ${t * 0.12})`);
-        glow.addColorStop(1, 'rgba(255, 60, 0, 0)');
-        ctx.beginPath();
-        ctx.arc(0, 0, glowSize, 0, Math.PI * 2);
-        ctx.fillStyle = glow;
-        ctx.fill();
-
-        ctx.beginPath();
-        ctx.arc(0, 0, ember.size, 0, Math.PI * 2);
-        ctx.fillStyle = color;
-        ctx.fill();
-
-        if (t > 0.5) {
-          ctx.beginPath();
-          ctx.arc(0, 0, ember.size * 0.35, 0, Math.PI * 2);
-          ctx.fillStyle = `rgba(255, 255, 220, ${(t - 0.5) * 1.2})`;
-          ctx.fill();
-        }
-
-        ctx.restore();
-      });
-
-      rafRef.current = requestAnimationFrame(draw);
-    };
-    rafRef.current = requestAnimationFrame(draw);
-
-    return () => {
-      cancelAnimationFrame(rafRef.current);
-      window.removeEventListener('resize', resize);
-    };
-  }, []);
-
-  // Track scroll — determine if section is in view and progress through it
-  useEffect(() => {
-    const handleScroll = () => {
-      const section = sectionRef.current;
-      if (!section) return;
-      const rect = section.getBoundingClientRect();
-      const vh = window.innerHeight;
-
-      // Is the section currently spanning the viewport?
-      const active = rect.top <= 0 && rect.bottom >= vh;
-      setIsActive(active);
-
-      if (active) {
-        const progress = Math.max(0, Math.min(1, -rect.top / (rect.height - vh)));
-        setScrollProgress(progress);
+    gsap.fromTo(textRef.current,
+      { opacity: 0, y: 30 },
+      {
+        opacity: 1,
+        y: 0,
+        duration: 1,
+        scrollTrigger: {
+          trigger: sectionRef.current,
+          start: 'top 60%',
+          end: 'top 20%',
+          scrub: true,
+        },
       }
-    };
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    handleScroll();
-    return () => window.removeEventListener('scroll', handleScroll);
+    );
+
+    gsap.to(textRef.current, {
+      opacity: 0,
+      y: -20,
+      scrollTrigger: {
+        trigger: sectionRef.current,
+        start: 'bottom 80%',
+        end: 'bottom 40%',
+        scrub: true,
+      },
+    });
   }, []);
 
   return (
     <section
       ref={sectionRef}
-      id="concept"
-      className="relative bg-[var(--bg-primary)]"
-      style={{ height: `${lines.length * 120 + 60}vh` }}
+      className="relative min-h-[80vh] bg-[var(--bg-primary)] flex items-center justify-center"
     >
-      {/* Fixed overlay - always rendered, visibility toggled */}
-      <div
-        className="fixed inset-0 z-30 pointer-events-none"
-        style={{ opacity: isActive ? 1 : 0, visibility: isActive ? 'visible' : 'hidden' }}
-      >
-        <div className="absolute inset-0 bg-[var(--bg-primary)]" />
-        <canvas ref={canvasRef} className="absolute inset-0 z-0" />
-
-          <div className="absolute inset-0 z-10">
-            {lines.map((line, i) => {
-              const lineStart = i / lines.length;
-              const peakStart = (i + 0.25) / lines.length;
-              const peakEnd = (i + 0.65) / lines.length;
-              const lineEnd = (i + 0.9) / lines.length;
-
-              let opacity = 0;
-              if (scrollProgress >= lineStart && scrollProgress <= lineEnd) {
-                if (scrollProgress < peakStart) {
-                  opacity = (scrollProgress - lineStart) / (peakStart - lineStart);
-                } else if (scrollProgress <= peakEnd) {
-                  opacity = 1;
-                } else {
-                  opacity = 1 - (scrollProgress - peakEnd) / (lineEnd - peakEnd);
-                }
-              }
-              opacity = Math.max(0, Math.min(1, opacity));
-
-              const lineMid = (lineStart + lineEnd) / 2;
-              const yOffset = (scrollProgress - lineMid) * -120;
-
-              return (
-                <p
-                  key={i}
-                  className="absolute left-0 right-0 px-5 sm:px-8 font-[family-name:var(--font-display)] text-[var(--text-h2)] leading-relaxed text-[var(--text-primary)] text-center max-w-3xl mx-auto"
-                  style={{
-                    top: '50%',
-                    transform: `translateY(calc(-50% + ${yOffset}vh))`,
-                    opacity,
-                  }}
-                >
-                  {line}
-                </p>
-              );
-            })}
-          </div>
-
-          <div className="absolute top-0 left-0 right-0 h-32 bg-gradient-to-b from-[var(--bg-primary)] to-transparent z-20" />
-          <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-[var(--bg-primary)] to-transparent z-20" />
-        </div>
+      <div ref={textRef} className="max-w-2xl px-6 text-center opacity-0">
+        <p className="font-[family-name:var(--font-display)] text-xl md:text-2xl lg:text-3xl text-[var(--text-secondary)] leading-relaxed italic">
+          Not to lecture. Not to perform. To dig into Scripture, into doubt, into the questions most people are afraid to ask. A space where faith gets pressure-tested and Christ remains the answer.
+        </p>
+      </div>
     </section>
   );
 }

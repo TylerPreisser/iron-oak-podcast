@@ -77,6 +77,8 @@ export function HeroSection() {
         </div>
       </div>
 
+      <div className="absolute bottom-0 left-0 right-0 h-40 bg-gradient-to-b from-transparent to-[var(--bg-primary)]" />
+
       <div className="hero-scroll absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2">
         <span className="text-xs text-[var(--text-tertiary)] tracking-wider uppercase">Scroll</span>
         <div className="w-5 h-8 rounded-full border border-[var(--border-default)] flex items-start justify-center p-1.5">
