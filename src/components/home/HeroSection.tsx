@@ -48,14 +48,14 @@ export function HeroSection() {
             <div className="hero-email max-w-lg mt-2 mx-auto lg:mx-0">
               <form
                 className="flex flex-col gap-2"
-                action="https://formsubmit.co/ajax/tylerpreisser@gmail.com"
+                action="https://formsubmit.co/ajax/theironandoakpodcast@gmail.com"
                 method="POST"
                 onSubmit={async (e) => {
                   e.preventDefault();
                   const form = e.currentTarget;
                   const data = new FormData(form);
                   try {
-                    await fetch('https://formsubmit.co/ajax/tylerpreisser@gmail.com', {
+                    await fetch('https://formsubmit.co/ajax/theironandoakpodcast@gmail.com', {
                       method: 'POST',
                       headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
                       body: JSON.stringify({

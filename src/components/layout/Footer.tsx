@@ -37,7 +37,7 @@ export function Footer() {
                 const form = e.currentTarget;
                 const data = new FormData(form);
                 try {
-                  await fetch('https://formsubmit.co/ajax/tylerpreisser@gmail.com', {
+                  await fetch('https://formsubmit.co/ajax/theironandoakpodcast@gmail.com', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
                     body: JSON.stringify({
