@@ -54,7 +54,7 @@ export function HostsSection() {
             Your Hosts
           </h2>
           <p className="font-[family-name:var(--font-body)] text-[var(--text-secondary)] mt-3 text-lg">
-            Coming soon.
+            Two perspectives. One table.
           </p>
         </FadeIn>
 
@@ -86,7 +86,10 @@ export function HostsSection() {
                 </h3>
 
                 <p className="font-[family-name:var(--font-accent)] text-sm text-[var(--text-tertiary)] tracking-wider mb-4">
-                  Bio coming soon.
+                  {host.role}
+                </p>
+                <p className="font-[family-name:var(--font-body)] text-[var(--text-secondary)] text-base leading-relaxed">
+                  {host.fullBio}
                 </p>
               </div>
             </FadeIn>

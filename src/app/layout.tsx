@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from 'next';
 import { Playfair_Display, DM_Sans, JetBrains_Mono } from 'next/font/google';
+import Script from 'next/script';
 import { ThemeProvider } from '@/providers/ThemeProvider';
 import { SmoothScrollProvider } from '@/providers/SmoothScrollProvider';
 import { Header } from '@/components/layout/Header';
@@ -80,6 +81,45 @@ export default function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
+  const jsonLd = {
+    '@context': 'https://schema.org',
+    '@graph': [
+      {
+        '@type': 'Organization',
+        name: 'The Iron and Oak Podcast',
+        url: 'https://theironandoakpodcast.com',
+        logo: 'https://theironandoakpodcast.com/images/iron-oak-logo-new.webp',
+        sameAs: [],
+      },
+      {
+        '@type': 'WebSite',
+        name: 'The Iron and Oak Podcast',
+        url: 'https://theironandoakpodcast.com',
+        description:
+          'Tyler Preisser and Lincoln Myers wrestle with the hardest questions about faith, God, and belief. 12 episodes. 109 questions. Rooted in Scripture. Forged in honesty.',
+      },
+      {
+        '@type': 'PodcastSeries',
+        name: 'The Iron and Oak Podcast',
+        description:
+          'Scripture-centered conversations about doubt and hard questions. Season One: Foundations of the Faith.',
+        url: 'https://theironandoakpodcast.com',
+        author: [
+          {
+            '@type': 'Person',
+            name: 'Tyler Preisser',
+            url: 'https://theironandoakpodcast.com/about',
+          },
+          {
+            '@type': 'Person',
+            name: 'Lincoln Myers',
+            url: 'https://theironandoakpodcast.com/about',
+          },
+        ],
+      },
+    ],
+  };
+
   return (
     <html
       lang="en"
@@ -87,7 +127,25 @@ export default function RootLayout({
       suppressHydrationWarning
       className={`${playfair.variable} ${dmSans.variable} ${jetbrainsMono.variable}`}
     >
+      <head>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        />
+      </head>
       <body className="min-h-screen antialiased">
+        <Script
+          src="https://www.googletagmanager.com/gtag/js?id=G-EZZ0J4K2RP"
+          strategy="afterInteractive"
+        />
+        <Script id="gtag-init" strategy="afterInteractive">
+          {`
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', 'G-EZZ0J4K2RP');
+          `}
+        </Script>
         <ThemeProvider>
           <SmoothScrollProvider>
               <ScrollToTop />

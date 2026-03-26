@@ -3,18 +3,18 @@ import type { Host } from '@/types';
 export const hosts: Host[] = [
   {
     name: 'Tyler Preisser',
-    role: 'Co-Host & Producer',
+    role: 'Co-Founder & Co-Host',
     shortBio: 'Systems thinker. Analytical edge. Co-founder of R Squared AI.',
     fullBio:
-      'Tyler brings an analytical lens to faith conversations. As co-founder and CPO of R Squared AI, he approaches theology the way he approaches technology — with precision, curiosity, and a refusal to accept surface-level answers. Married to Clare, rooted at C3 Hays, and convinced that honest questions lead to deeper faith.',
+      'Tyler Preisser grew up on Kansas farmland and built his career the hard way — construction, top Verizon sales, VP of Operations at a Kansas oil company where he built the agentic AI systems before anyone was calling them that. In June 2025 he co-founded R Squared AI Inc., an AI consulting firm, where he serves as CPO. He graduated from Fort Hays State University with a B.S. in Engineering Design and Technology and is self-taught in machine learning, web development, algorithmic trading, and prompt engineering. He is a Protestant and Reformed Christian on an active, honest faith journey — attending C3 Hays and leading the local Turning Point USA chapter at FHSU. Married to Clare, a labor and delivery nurse. He co-founded Iron & Oak because the questions matter and deserve a real conversation.',
     texture: 'iron',
   },
   {
     name: 'Lincoln Myers',
-    role: 'Co-Host & Creative Director',
+    role: 'Co-Founder & Co-Host',
     shortBio: 'Filmmaker. Storyteller. Founder of Myers Media LLC.',
     fullBio:
-      'Lincoln sees the world through a storytelling lens. As founder of Myers Media LLC and FHSU Media Production graduate, he brings a filmmaker\'s eye to conversations about faith — finding the narrative arc in theology, the human story behind doctrine. He believes the best conversations happen when you stop performing and start digging.',
+      'Lincoln is co-founder and co-host of The Iron and Oak Podcast. Full bio coming soon.',
     texture: 'oak',
   },
 ];
