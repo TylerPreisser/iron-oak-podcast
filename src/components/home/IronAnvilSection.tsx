@@ -48,29 +48,7 @@ function drawAnvil(
   const faceOffsetY = imgH * 0.05; // face is near the top of the image
 
   // Center horizontally on cx, align face top to cy
-  const drawX = cx - imgW * 0.55;
-  const drawY = cy - faceOffsetY;
-  ctx.drawImage(anvilImg, drawX, drawY, imgW, imgH);
-
-  // Metallic shine overlay — gradient highlight across the top portion
-  const shineGrad = ctx.createLinearGradient(drawX, drawY, drawX + imgW, drawY + imgH * 0.4);
-  shineGrad.addColorStop(0, 'rgba(180,180,200,0.0)');
-  shineGrad.addColorStop(0.3, 'rgba(200,200,220,0.12)');
-  shineGrad.addColorStop(0.5, 'rgba(220,220,240,0.18)');
-  shineGrad.addColorStop(0.7, 'rgba(200,200,220,0.10)');
-  shineGrad.addColorStop(1, 'rgba(180,180,200,0.0)');
-  ctx.globalCompositeOperation = 'lighter';
-  ctx.fillStyle = shineGrad;
-  ctx.fillRect(drawX, drawY, imgW, imgH * 0.45);
-  ctx.globalCompositeOperation = 'source-over';
-
-  // Specular highlight line along the top face edge
-  ctx.beginPath();
-  ctx.moveTo(drawX + imgW * 0.08, drawY + imgH * 0.04);
-  ctx.lineTo(drawX + imgW * 0.75, drawY + imgH * 0.02);
-  ctx.strokeStyle = 'rgba(255,255,255,0.15)';
-  ctx.lineWidth = 1.5;
-  ctx.stroke();
+  ctx.drawImage(anvilImg, cx - imgW * 0.55, cy - faceOffsetY, imgW, imgH);
 
   ctx.restore();
 }
