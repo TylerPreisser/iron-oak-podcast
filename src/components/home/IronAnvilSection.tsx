@@ -304,9 +304,10 @@ function drawScene(
   const impactX = anvilCX - 20;
   const impactY = anvilTopY - 2;
 
-  // Pivot: hand-grip, upper-right of canvas
-  const pivotX = w * 0.82;
-  const pivotY = anvilTopY - 250;
+  // Pivot: hand-grip at the RIGHT side, at anvil face height.
+  // Handle extends LEFT from here to the hammer head near the anvil.
+  const pivotX = w * 0.92;
+  const pivotY = anvilTopY;
 
   // Compute impact angle fresh from current canvas dimensions
   const dx = impactX - pivotX;
@@ -396,7 +397,7 @@ export function IronAnvilSection() {
   const canvasRef  = useRef<HTMLCanvasElement>(null);
   const textRef    = useRef<HTMLDivElement>(null);
   // offset: angle offset from impact (negative = raised, 0 = striking)
-  const stateRef   = useRef({ offset: -0.6, time: 0, sparks: [] as Spark[] });
+  const stateRef   = useRef({ offset: 0.6, time: 0, sparks: [] as Spark[] });
   const rafRef     = useRef(0);
 
   useEffect(() => {
@@ -442,7 +443,7 @@ export function IronAnvilSection() {
     // drawScene computes impactAngle fresh each frame from current
     // canvas dimensions, so the animation stays correct after resize.
     // We only tween a fixed offset value (negative = raised, 0 = striking).
-    const anim = { offset: -0.6 };
+    const anim = { offset: 0.6 };
 
     const tl = gsap.timeline({ repeat: -1, repeatDelay: 0.5, paused: true });
 
@@ -456,7 +457,7 @@ export function IronAnvilSection() {
 
     // Bounce back up slightly
     tl.to(anim, {
-      offset: -0.15,
+      offset: 0.15,
       duration: 0.25,
       ease: 'power2.out',
       onUpdate: () => { stateRef.current.offset = anim.offset; },
@@ -472,7 +473,7 @@ export function IronAnvilSection() {
 
     // Raise back up
     tl.to(anim, {
-      offset: -0.6,
+      offset: 0.6,
       duration: 0.5,
       ease: 'power2.out',
       onUpdate: () => { stateRef.current.offset = anim.offset; },
