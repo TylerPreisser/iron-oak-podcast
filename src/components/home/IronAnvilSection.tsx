@@ -439,7 +439,7 @@ function drawScene(
     }
   };
 
-  if (angleDiff < 0.08) {
+  if (angleDiff < 0.08 && time % 4 === 0 && sparks.length < 50) {
     // ── Type 0: Large bright sparks — scaled by strike intensity ──
     const largeCount = Math.round((5 + Math.floor(Math.random() * 4)) * intensity);
     for (let i = 0; i < largeCount; i++) {
@@ -502,7 +502,7 @@ function drawScene(
   }
 
   // Continuous trickle of embers while glow is visible
-  if (glowIntensity > 0.18 && time % 3 === 0) {
+  if (glowIntensity > 0.18 && time % 6 === 0 && sparks.length < 50) {
     const a     = spawnAngle();
     const speed = 1.0 + Math.random() * 2.2;
     const maxL  = 0.5 + Math.random() * 0.4;

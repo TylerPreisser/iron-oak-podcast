@@ -244,10 +244,10 @@ export function OakMissionSection() {
       const progress = Math.max(0, Math.min(1, -rect.top / scrollable));
       progressRef.current = progress;
 
-      // Fade in during 0-30%, hold 30-70%, fade out 70-100%
+      // Fade in during 0-10%, hold 10-70%, fade out 70-100%
       let opacity = 0;
-      if (progress < 0.30) {
-        opacity = progress / 0.30;
+      if (progress < 0.10) {
+        opacity = progress / 0.10;
       } else if (progress < 0.70) {
         opacity = 1;
       } else {
