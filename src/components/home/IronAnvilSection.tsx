@@ -642,9 +642,9 @@ export function IronAnvilSection() {
   return (
     <section
       ref={sectionRef}
-      className="relative min-h-[70vh] lg:min-h-screen bg-[var(--bg-primary)] will-change-transform"
+      className="relative min-h-[70vh] lg:min-h-[calc(100vh+60px)] bg-[var(--bg-primary)] will-change-transform"
     >
-      <div className="absolute inset-0 flex items-center lg:pt-[60px]">
+      <div className="absolute inset-0 flex items-center">
         {/* Text — left side.
             Mobile: full-width so text is fully readable.
             lg+: 42% so canvas has room on the right.
