@@ -59,7 +59,7 @@ export function SubscribeSection() {
                 type="text"
                 name="name"
                 required
-                placeholder="First name"
+                placeholder="Full name"
                 className="w-full sm:w-[140px] h-12 px-5 rounded-full bg-[var(--bg-secondary)] border border-[var(--border-default)] text-[var(--text-primary)] placeholder:text-[var(--text-tertiary)] focus:outline-none focus:border-[var(--accent-oak)] transition-colors duration-300 text-base sm:text-sm"
               />
               <input

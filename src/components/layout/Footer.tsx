@@ -56,7 +56,7 @@ export function Footer() {
                   type="text"
                   name="name"
                   required
-                  placeholder="First name"
+                  placeholder="Full name"
                   className="w-full sm:w-[120px] h-10 min-h-[44px] px-4 text-base sm:text-sm rounded-full bg-[var(--bg-secondary)] border border-[var(--border-default)] text-[var(--text-primary)] placeholder:text-[var(--text-tertiary)] focus:outline-none focus:border-[var(--accent-oak)] transition-colors duration-300"
                 />
                 <input
