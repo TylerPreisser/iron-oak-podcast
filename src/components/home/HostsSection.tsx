@@ -46,10 +46,7 @@ export function HostsSection() {
     <section id="hosts" className="section-padding pt-32 md:pt-40 lg:pt-48 bg-[var(--bg-primary)]">
       <div className="max-w-6xl mx-auto px-4 sm:px-8 md:px-12 lg:px-16">
         <FadeIn className="text-center mb-16">
-          <span className="font-[family-name:var(--font-accent)] text-sm tracking-[0.2em] uppercase text-[var(--accent-oak)]">
-            Your Hosts
-          </span>
-          <h2 className="font-[family-name:var(--font-display)] text-[var(--text-h1)] text-[var(--text-primary)] mt-2">
+          <h2 className="font-[family-name:var(--font-display)] text-4xl md:text-5xl lg:text-6xl text-[var(--text-primary)]">
             Your Hosts
           </h2>
         </FadeIn>
