@@ -52,9 +52,6 @@ export function HostsSection() {
           <h2 className="font-[family-name:var(--font-display)] text-[var(--text-h1)] text-[var(--text-primary)] mt-2">
             Your Hosts
           </h2>
-          <p className="font-[family-name:var(--font-body)] text-[var(--text-secondary)] mt-3 text-lg">
-            Two perspectives. One table.
-          </p>
         </FadeIn>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20">
