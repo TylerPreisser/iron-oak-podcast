@@ -28,7 +28,7 @@ export function FeaturedSeries() {
     <section
       ref={sectionRef}
       id="featured-series"
-      className="section-padding bg-[var(--bg-primary)]"
+      className="section-padding pt-32 md:pt-40 lg:pt-24 bg-[var(--bg-primary)]"
     >
       <div className="max-w-6xl mx-auto px-4 sm:px-8 md:px-12 lg:px-16">
         {/* Header */}
