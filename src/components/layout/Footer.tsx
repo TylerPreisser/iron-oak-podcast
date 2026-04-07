@@ -103,7 +103,7 @@ export function Footer() {
             Built with conviction in Hays, Kansas.
           </p>
           <p className="text-sm text-[var(--text-tertiary)]">
-            &copy; {new Date().getFullYear()} The Iron &amp; Oak Podcast. All rights reserved.
+            &copy;{' '}{new Date().getFullYear()}{' '}The Iron &amp; Oak Podcast. All rights reserved.
           </p>
         </div>
       </div>
