@@ -39,7 +39,7 @@ export function FeaturedSeries() {
           <span className="font-[family-name:var(--font-accent)] text-sm tracking-[0.2em] uppercase text-[var(--accent-oak-light)]">
             Season One
           </span>
-          <h2 className="font-[family-name:var(--font-display)] text-[var(--text-h1)] text-[var(--text-primary)] mt-3 mb-3">
+          <h2 className="font-[family-name:var(--font-display)] text-[var(--text-h1)] lg:text-5xl text-[var(--text-primary)] mt-3 mb-3">
             {series.title}
           </h2>
           <p className="font-[family-name:var(--font-body)] text-white/70 max-w-2xl mx-auto text-lg">
