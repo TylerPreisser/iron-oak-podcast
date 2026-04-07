@@ -26,7 +26,7 @@ export function HeroSection() {
     <section
       ref={sectionRef}
       id="hero"
-      className="relative min-h-screen flex items-start pt-24 sm:pt-28 lg:items-center lg:pt-0 overflow-hidden pb-24 lg:pb-0"
+      className="relative min-h-screen flex items-start pt-16 sm:pt-20 lg:items-center lg:pt-0 overflow-hidden pb-24 lg:pb-0"
     >
       <GradientBackground className="z-0" />
 
@@ -114,7 +114,7 @@ export function HeroSection() {
 
       <div className="absolute bottom-0 left-0 right-0 h-40 bg-gradient-to-b from-transparent to-[var(--bg-primary)]" />
 
-      <div className="hero-scroll absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2">
+      <div className="hero-scroll absolute bottom-28 sm:bottom-24 lg:bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2">
         <span className="text-xs text-[var(--text-tertiary)] tracking-wider uppercase">Scroll</span>
         <div className="w-5 h-8 rounded-full border border-[var(--border-default)] flex items-start justify-center p-1.5">
           <div className="w-1 h-2 rounded-full bg-[var(--accent-oak)] animate-bounce" />
