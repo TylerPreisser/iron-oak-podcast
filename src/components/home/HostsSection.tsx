@@ -77,7 +77,10 @@ export function HostsSection() {
                         alt={host.name}
                         width={160}
                         height={160}
-                        className="w-full h-full object-cover"
+                        className={cn(
+                          'w-full h-full object-cover',
+                          host.name === 'Tyler Preisser' && 'object-[55%_center]'
+                        )}
                       />
                     </div>
                   ) : (

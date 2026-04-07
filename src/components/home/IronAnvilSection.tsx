@@ -371,7 +371,7 @@ function drawScene(
   // yOffset shifts everything down so the anvil stays visually in the same
   // position while the canvas extends above the section for hammer headroom.
   const anvilCX    = w * 0.62;
-  const anvilTopY  = (h - yOffset) * 0.25 + yOffset;
+  const anvilTopY  = (h - yOffset) * 0.42 + yOffset;
   const anvilScale = 0.88;
 
   // Impact point: where the hammer face contacts the anvil
@@ -657,17 +657,16 @@ export function IronAnvilSection() {
             lg+: 42% so canvas has room on the right.
         */}
         <div ref={textRef} className="w-full lg:w-[42%] px-6 lg:pl-12 xl:pl-20 relative z-10">
-          <span className="why-text-item block font-[family-name:var(--font-accent)] text-sm tracking-[0.2em] uppercase text-[var(--accent-iron-light)] mb-4 opacity-0">
+          <span className="why-text-item block font-[family-name:var(--font-accent)] text-sm md:text-base tracking-[0.2em] uppercase text-[var(--accent-iron-light)] mb-4 opacity-0">
             Our Purpose
           </span>
-          <h2 className="why-text-item font-[family-name:var(--font-display)] text-[var(--text-h1)] text-[var(--text-primary)] leading-tight mb-6 opacity-0">
+          <h2 className="why-text-item font-[family-name:var(--font-display)] text-[var(--text-h1)] lg:text-5xl text-[var(--text-primary)] leading-tight mb-6 opacity-0">
             Why Are We Here?
           </h2>
-          {/* text-base on mobile (16px minimum for iOS no-zoom); text-lg on md+ */}
-          <p className="why-text-item text-base md:text-lg text-[var(--text-secondary)] leading-relaxed mb-4 max-w-lg opacity-0">
+          <p className="why-text-item text-base md:text-lg lg:text-xl text-[var(--text-secondary)] leading-relaxed mb-4 max-w-xl opacity-0">
             Because faith that can&apos;t be questioned isn&apos;t faith — it&apos;s habit. Because the people sitting in pews deserve more than bumper-sticker theology. Because iron sharpens iron, and that means friction.
           </p>
-          <p className="why-text-item text-base md:text-lg text-[var(--text-secondary)] leading-relaxed max-w-lg opacity-0">
+          <p className="why-text-item text-base md:text-lg lg:text-xl text-[var(--text-secondary)] leading-relaxed max-w-xl opacity-0">
             We&apos;re here to take the hardest doctrines of the Christian faith, lay them on the anvil, and strike until what&apos;s true rings clear.
           </p>
         </div>

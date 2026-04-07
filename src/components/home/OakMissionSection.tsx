@@ -309,27 +309,22 @@ export function OakMissionSection() {
         */}
         <div ref={textRef} className="w-full lg:w-[45%] px-6 pr-16 sm:pr-8 lg:pr-6 lg:pl-12 xl:pl-20 relative z-10">
           <span
-            className="mission-text-item block font-[family-name:var(--font-accent)] text-sm tracking-[0.2em] uppercase text-[var(--accent-oak)] mb-4"
-            style={{}}
+            className="mission-text-item block font-[family-name:var(--font-accent)] text-sm md:text-base tracking-[0.2em] uppercase text-[var(--accent-oak)] mb-4"
           >
             Our Mission
           </span>
           <h2
-            className="mission-text-item font-[family-name:var(--font-display)] text-[var(--text-h1)] text-[var(--text-primary)] leading-tight mb-6"
-            style={{}}
+            className="mission-text-item font-[family-name:var(--font-display)] text-[var(--text-h1)] lg:text-5xl text-[var(--text-primary)] leading-tight mb-6"
           >
             What&apos;s Our Mission?
           </h2>
-          {/* text-base on mobile (16px) — stays readable; text-lg on md+ */}
           <p
-            className="mission-text-item text-base md:text-lg text-[var(--text-secondary)] leading-relaxed mb-4 max-w-lg"
-            style={{}}
+            className="mission-text-item text-base md:text-lg lg:text-xl text-[var(--text-secondary)] leading-relaxed mb-4 max-w-xl"
           >
             To create a space where the hardest questions about faith aren&apos;t avoided — they&apos;re welcomed. Where Scripture is the foundation, not a prop. Where honesty matters more than polish.
           </p>
           <p
-            className="mission-text-item text-base md:text-lg text-[var(--text-secondary)] leading-relaxed max-w-lg"
-            style={{}}
+            className="mission-text-item text-base md:text-lg lg:text-xl text-[var(--text-secondary)] leading-relaxed max-w-xl"
           >
             Iron &amp; Oak exists to sharpen believers and invite skeptics into the same conversation — one that doesn&apos;t flinch.
           </p>
