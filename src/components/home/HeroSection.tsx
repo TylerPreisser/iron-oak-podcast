@@ -26,14 +26,14 @@ export function HeroSection() {
     <section
       ref={sectionRef}
       id="hero"
-      className="relative min-h-screen flex items-center justify-center overflow-hidden"
+      className="relative min-h-screen flex items-start pt-24 sm:pt-28 lg:items-center lg:pt-0 overflow-hidden pb-24 lg:pb-0"
     >
       <GradientBackground className="z-0" />
 
       {/* px: 1rem on tiny phones, scaling up to 8rem on xl desktop */}
       <div className="relative z-10 w-full px-4 sm:px-8 md:px-16 lg:px-24 xl:px-32">
         {/* Two-column: text left, logo right — stacks on mobile */}
-        <div className="flex flex-col-reverse lg:flex-row items-center gap-8 lg:gap-16">
+        <div className="flex flex-col-reverse lg:flex-row items-center gap-4 sm:gap-6 lg:gap-16">
           {/* Text — left side */}
           <div className="hero-text text-center lg:text-left flex-1 w-full">
             <h1 className="font-[family-name:var(--font-display)] text-3xl md:text-5xl lg:text-6xl leading-[1.1] text-[var(--text-primary)] mb-4 md:mb-5">
