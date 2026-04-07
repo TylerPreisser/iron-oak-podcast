@@ -37,13 +37,11 @@ export function Footer() {
                 const form = e.currentTarget;
                 const data = new FormData(form);
                 try {
-                  await fetch('https://formsubmit.co/ajax/theironandoakpodcast@gmail.com', {
+                  await fetch('https://hooks.zapier.com/hooks/catch/21721728/u7hgnet/', {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
                     body: JSON.stringify({
                       name: data.get('name'),
                       email: data.get('email'),
-                      _subject: 'New Iron & Oak Subscriber (footer)',
                     }),
                   });
                   form.reset();
@@ -76,8 +74,6 @@ export function Footer() {
                   Join
                 </button>
               </div>
-              <input type="hidden" name="_captcha" value="false" />
-              <input type="hidden" name="_template" value="table" />
             </form>
           </div>
 

@@ -44,24 +44,23 @@ export function HeroSection() {
               Two men from the Kansas plains digging into Scripture, doubt, and the questions that matter most.
             </p>
 
-            {/* Mailing list form — first name + email, submits to formsubmit.co */}
+            {/* Mailing list form — first name + email, submits to Zapier webhook */}
             <div className="hero-email max-w-lg mt-2 mx-auto lg:mx-0">
+              <p className="text-sm text-[var(--text-secondary)] mb-3">
+                Stay connected. Never miss an episode. Join the launch list.
+              </p>
               <form
                 className="flex flex-col gap-2"
-                action="https://formsubmit.co/ajax/theironandoakpodcast@gmail.com"
-                method="POST"
                 onSubmit={async (e) => {
                   e.preventDefault();
                   const form = e.currentTarget;
                   const data = new FormData(form);
                   try {
-                    await fetch('https://formsubmit.co/ajax/theironandoakpodcast@gmail.com', {
+                    await fetch('https://hooks.zapier.com/hooks/catch/21721728/u7hgnet/', {
                       method: 'POST',
-                      headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
                       body: JSON.stringify({
                         name: data.get('name'),
                         email: data.get('email'),
-                        _subject: 'New Iron & Oak Podcast Subscriber',
                       }),
                     });
                     form.reset();
@@ -95,9 +94,6 @@ export function HeroSection() {
                     Join
                   </button>
                 </div>
-                {/* formsubmit.co spam protection */}
-                <input type="hidden" name="_captcha" value="false" />
-                <input type="hidden" name="_template" value="table" />
               </form>
             </div>
           </div>

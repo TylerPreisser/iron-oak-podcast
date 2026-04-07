@@ -34,18 +34,48 @@ export function SubscribeSection() {
 
         {/* Email form */}
         <ScrollReveal delay={0.3}>
-          <form className="flex flex-col sm:flex-row gap-3 max-w-lg mx-auto mb-12" onSubmit={(e) => e.preventDefault()}>
-            <input
-              type="email"
-              placeholder="Enter your email"
-              className="flex-1 h-12 px-5 rounded-full bg-[var(--bg-secondary)] border border-[var(--border-default)] text-[var(--text-primary)] placeholder:text-[var(--text-tertiary)] focus:outline-none focus:border-[var(--accent-oak)] transition-colors duration-300"
-            />
-            <button
-              type="submit"
-              className="h-12 px-8 rounded-full bg-[var(--accent-oak)] text-white font-medium hover:bg-[var(--accent-oak-light)] transition-all duration-300 hover:scale-[1.03] hover:shadow-[var(--shadow-glow)] active:scale-[0.97]"
-            >
-              Join the List
-            </button>
+          <form
+            className="flex flex-col gap-2 max-w-lg mx-auto mb-12"
+            onSubmit={async (e) => {
+              e.preventDefault();
+              const form = e.currentTarget;
+              const data = new FormData(form);
+              try {
+                await fetch('https://hooks.zapier.com/hooks/catch/21721728/u7hgnet/', {
+                  method: 'POST',
+                  body: JSON.stringify({
+                    name: data.get('name'),
+                    email: data.get('email'),
+                  }),
+                });
+                form.reset();
+                const btn = form.querySelector('button');
+                if (btn) { btn.textContent = 'Subscribed!'; setTimeout(() => { btn.textContent = 'Join the List'; }, 3000); }
+              } catch { /* silently fail */ }
+            }}
+          >
+            <div className="flex flex-col sm:flex-row gap-2">
+              <input
+                type="text"
+                name="name"
+                required
+                placeholder="First name"
+                className="w-full sm:w-[140px] h-12 px-5 rounded-full bg-[var(--bg-secondary)] border border-[var(--border-default)] text-[var(--text-primary)] placeholder:text-[var(--text-tertiary)] focus:outline-none focus:border-[var(--accent-oak)] transition-colors duration-300 text-base sm:text-sm"
+              />
+              <input
+                type="email"
+                name="email"
+                required
+                placeholder="Email address"
+                className="w-full sm:flex-1 h-12 px-5 rounded-full bg-[var(--bg-secondary)] border border-[var(--border-default)] text-[var(--text-primary)] placeholder:text-[var(--text-tertiary)] focus:outline-none focus:border-[var(--accent-oak)] transition-colors duration-300 text-base sm:text-sm"
+              />
+              <button
+                type="submit"
+                className="w-full sm:w-auto h-12 px-8 rounded-full bg-[var(--accent-oak)] text-white font-medium hover:bg-[var(--accent-oak-light)] transition-all duration-300 hover:scale-[1.03] hover:shadow-[var(--shadow-glow)] active:scale-[0.97]"
+              >
+                Join the List
+              </button>
+            </div>
           </form>
         </ScrollReveal>
 

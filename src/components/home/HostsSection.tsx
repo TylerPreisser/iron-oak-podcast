@@ -8,8 +8,7 @@ import { cn } from '@/lib/utils';
 
 const hostImages: Record<string, string> = {
   'Tyler Preisser': assetPath('/images/tyler-headshot.webp'),
-  // Drop Lincoln's headshot at /public/images/lincoln-headshot.webp to activate
-  // 'Lincoln Myers': '/images/lincoln-headshot.webp',
+  'Lincoln Myers': assetPath('/images/lincoln-headshot.webp'),
 };
 
 function FadeIn({ children, className, delay = 0 }: { children: React.ReactNode; className?: string; delay?: number }) {
@@ -62,18 +61,37 @@ export function HostsSection() {
           {hosts.map((host, i) => (
             <FadeIn key={host.name} delay={i * 200}>
               <div className="text-center">
-                {/* Initials icon */}
+                {/* Host photo */}
                 <div className="mb-6 flex justify-center">
-                  <div
-                    className={cn(
-                      'w-24 h-24 md:w-28 md:h-28 rounded-full flex items-center justify-center text-2xl font-bold font-[family-name:var(--font-display)]',
-                      host.texture === 'iron'
-                        ? 'bg-[var(--accent-iron)]/10 text-[var(--accent-iron)] border-2 border-[var(--accent-iron)]/30'
-                        : 'bg-[var(--accent-oak)]/10 text-[var(--accent-oak)] border-2 border-[var(--accent-oak)]/30'
-                    )}
-                  >
-                    {host.name.split(' ').map(n => n[0]).join('')}
-                  </div>
+                  {hostImages[host.name] ? (
+                    <div
+                      className={cn(
+                        'w-32 h-32 md:w-40 md:h-40 rounded-full overflow-hidden border-3',
+                        host.texture === 'iron'
+                          ? 'border-[var(--accent-iron)]/40'
+                          : 'border-[var(--accent-oak)]/40'
+                      )}
+                    >
+                      <Image
+                        src={hostImages[host.name]}
+                        alt={host.name}
+                        width={160}
+                        height={160}
+                        className="w-full h-full object-cover"
+                      />
+                    </div>
+                  ) : (
+                    <div
+                      className={cn(
+                        'w-32 h-32 md:w-40 md:h-40 rounded-full flex items-center justify-center text-2xl font-bold font-[family-name:var(--font-display)]',
+                        host.texture === 'iron'
+                          ? 'bg-[var(--accent-iron)]/10 text-[var(--accent-iron)] border-2 border-[var(--accent-iron)]/30'
+                          : 'bg-[var(--accent-oak)]/10 text-[var(--accent-oak)] border-2 border-[var(--accent-oak)]/30'
+                      )}
+                    >
+                      {host.name.split(' ').map(n => n[0]).join('')}
+                    </div>
+                  )}
                 </div>
 
                 <h3
