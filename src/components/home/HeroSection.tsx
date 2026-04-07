@@ -26,7 +26,7 @@ export function HeroSection() {
     <section
       ref={sectionRef}
       id="hero"
-      className="relative min-h-screen flex items-center overflow-hidden pt-20 sm:pt-24 lg:pt-28"
+      className="relative min-h-screen flex items-center justify-center overflow-hidden"
     >
       <GradientBackground className="z-0" />
 
