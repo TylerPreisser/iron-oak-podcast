@@ -23,11 +23,10 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
       setThemeState(stored);
       document.documentElement.setAttribute('data-theme', stored);
     } else {
-      // Check system preference
-      const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-      const initial = prefersDark ? 'dark' : 'light';
-      setThemeState(initial);
-      document.documentElement.setAttribute('data-theme', initial);
+      // Default to dark — the site's intended default theme.
+      // Only respect OS preference if user has explicitly toggled before.
+      setThemeState('dark');
+      document.documentElement.setAttribute('data-theme', 'dark');
     }
   }, []);
 
