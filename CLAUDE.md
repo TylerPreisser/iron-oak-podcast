@@ -114,10 +114,7 @@ GitHub MCP and Context7 are connected at the account level.
 
 ## Settled decisions — see DECISIONS/
 `DECISIONS/` is the source of truth for settled intent; review agents read it first. Walk up from
-the working directory to find it (a parent workspace may own it). **Two folders are in force at
-once:** `~/.claude-shared/DECISIONS/` holds the owner's UNIVERSAL policy decisions (cite as
-`GLOBAL ADR-NNNN`), this repo's `DECISIONS/` holds codebase-scoped ones; **on conflict the GLOBAL
-ADR wins**, and this repo may carve out an exception only via its own ADR naming that number.
+the working directory to find it (a parent workspace may own it).
 - **Conformance to an Accepted ADR is NEVER a defect.** Do not "fix" or re-add what an ADR removed.
 - Think a settled decision is wrong? Do not change code or file a bug — note it under "Decision
   Concerns" in your review output, citing the ADR number. Nothing more.
@@ -129,7 +126,6 @@ ADR wins**, and this repo may carve out an exception only via its own ADR naming
   a reversal, a course ruled in/out — architecture, libraries, schema, scope, workflow) write the
   ADR immediately as `Status: Accepted` at the next free `NNNN` from `0000-template.md`, then say
   in one line what you recorded. Task direction, questions and thinking aloud are NOT settled.
-  Route by scope: universal → `~/.claude-shared/DECISIONS/`; this codebase only → here.
 
 ## graphify
 Knowledge graph at `graphify-out/`. For codebase questions run `graphify query "<question>"`

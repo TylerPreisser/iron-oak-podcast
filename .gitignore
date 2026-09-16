@@ -41,3 +41,7 @@ yarn-error.log*
 next-env.d.ts
 .claude/settings.local.json
 CLAUDE.local.md
+
+# graphify — local-only knowledge graph (rebuild with `graphify update .`, ~12s)
+graphify-out/
+.claude/settings.json.graphify-bak
