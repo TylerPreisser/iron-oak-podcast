@@ -9,5 +9,6 @@ CI_NODE=20
 ci_steps() {
   run npm-ci . npm ci --no-audit --no-fund
   run next-build . npx next build
+  run seo-guard . node scripts/verify-seo.mjs out
 }
-ci_summary() { printf 'next build green; out %s files' "$(find "$WT/out" -type f 2>/dev/null | wc -l | tr -d ' ')"; }
+ci_summary() { printf 'next build green; out %s files; seo-guard passed' "$(find "$WT/out" -type f 2>/dev/null | wc -l | tr -d ' ')"; }
