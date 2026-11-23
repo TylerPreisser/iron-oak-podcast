@@ -22,6 +22,8 @@ are **native Canvas 2D — not WebGL/Three.js**.
   it does NOT deploy. Actual deploy is manual: `npx wrangler pages deploy out --project-name
   <cloudflare-project>` (declared — project name isn't recorded anywhere in-repo; confirm via
   `wrangler pages project list` or the Cloudflare dashboard before running).
+  **From the PC (2026-11-22):** `_workspace/tools/deploy.sh <repo dir> <sha> [--dry-run]` runs
+  `scripts/deploy-from-clean-checkout.sh` (project `iron-oak-podcast`, gated on ci-local green).
 
 ## Key directories
 - `src/app/**` — App Router routes: `/`, `/episodes`, `/episodes/[slug]`, `/questions`,
